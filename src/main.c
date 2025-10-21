@@ -4,6 +4,16 @@
 #include "raymath.h"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
+typedef struct{
+
+	int typenote;
+	int posny;
+	int posnx;
+	int direct;
+	int turnr;
+	struct notes* next;
+
+}notes;
 
 void action(KeyboardKey x){
 
@@ -39,7 +49,24 @@ bool TimerDone(Timer* timer)
 	return false;
 }
 
-void shoot(int direction, int note){
+void shootmove(notes* x){
+
+	int mov = x->direct;
+
+	if (mov == 1){
+		x->posny += 64;
+	}
+	if (mov == 3){
+		x->posny -= 64;
+	}
+	if (mov == 2){
+		x->posnx += 64;
+	}
+	if (mov == 4){
+		x->posnx -= 64;
+	}
+
+	
 
 }
 
@@ -51,22 +78,17 @@ typedef struct{
 
 }enemytype;
 
-typedef struct{
 
-	int typenote;
-	struct notes* next;
-
-}notes;
 
 int main ()
 {
-	
-
+	int notelist[7];
 	int posx=64;
 	int posy=640;
 	int dir = 1;
 	int playerhp = 3;
 	int turn = 0;
+	int turncom;
 	
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
@@ -93,7 +115,7 @@ int main ()
 
 	Timer turntimer = {0};
 
-	float turnduration = 3.0f;
+	float turnduration = 1.0f;
 	float animationdur = 5.0f;
 	
 	notes* head = (notes*)malloc(sizeof(notes));
@@ -108,6 +130,9 @@ int main ()
 		n->next = new;
 		n = n->next;
 	}
+	for (int i = 0; i < 7; i++){
+		notelist[i] = i+1;// so i can navigate through notes and only shoot these
+	}
 	n = head;
 
 	// game loop
@@ -115,39 +140,69 @@ int main ()
 	{
 
 		
+		
 		if (TimerDone(&turntimer)){
 			if(IsKeyPressed(KEY_DOWN)) {
 				posy += 64;
 				dir = 1;
 				turn++;
 				StartTimer(&turntimer,turnduration);
+				turncom = turn;
+				shootmove(n);
 			}
 			if(IsKeyPressed(KEY_UP)) {
 				posy -= 64;
 				dir = 3;
 				turn++;
 				StartTimer(&turntimer,turnduration);
+				turncom = turn;
+				shootmove(n);
 			}
 			if(IsKeyPressed(KEY_RIGHT)) {
 				posx += 64;
 				dir = 2;
 				turn++;
 				StartTimer(&turntimer,turnduration);
+				turncom = turn;
+				shootmove(n);
 			}
 			if(IsKeyPressed(KEY_LEFT)) {
 				posx -= 64;
 				dir = 4;
 				turn++;
 				StartTimer(&turntimer,turnduration);
+				turncom = turn;
+				shootmove(n);
 			}
-			if(IsKeyPressed(KEY_ONE)){
-				shoot(dir, n->typenote);
-				n = n->next;
-				if (n->next == NULL) n = head;
+			if(IsKeyPressed(KEY_SPACE) && turn != 0){
 				turn++;
+				n->direct = dir;
+
+				n->posnx = posx;
+				n->posny = posy;
+				if(dir == 1) n->posny += 64;
+				if(dir == 3) n->posny -= 64;
+				if(dir == 2) n->posnx += 64;
+				if(dir == 4) n->posnx -= 64;
+				n->turnr = turn;
+
+				//shoot(n);
+				
 				StartTimer(&turntimer,turnduration);
+				shootmove(n);
+				//n = n->next; removed this for now so i can figure out the movement of the individual notes
+				turncom = turn;
+
 			}
 		}
+
+		if (turncom == turn){
+
+			
+		}
+		
+		
+		if (n == NULL) n = head;
 
 		UpdateTimer(&turntimer);
 
@@ -157,13 +212,14 @@ int main ()
 		BeginDrawing();
 
 		// Setup the back buffer for drawing (clear color and depth buffers)
-		ClearBackground(BLACK);
+		ClearBackground(WHITE);
 
 		// draw some text using the default font
 		DrawText("Hello Raylib ", 200,200,20,WHITE);
 
 		// draw our texture to the screen
 		DrawCircle(pcolx,pcoly,1, GREEN);
+		DrawTexture(note1, n->posnx, n->posny, WHITE); //draw texture also to figure out the individual note movement
 		if (dir == 1) DrawTexture(playersprite1, posx, posy, WHITE);
 		if (dir == 3) DrawTexture(playersprite3, posx, posy, WHITE);
 		if (dir == 2) DrawTexture(playersprite2, posx, posy, WHITE);

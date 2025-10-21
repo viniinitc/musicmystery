@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "raymath.h"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
@@ -38,17 +39,34 @@ bool TimerDone(Timer* timer)
 	return false;
 }
 
+void shoot(int direction, int note){
 
+}
+
+typedef struct{
+
+	int hp;
+	int type;
+	struct enemytype* next;
+
+}enemytype;
+
+typedef struct{
+
+	int typenote;
+	struct notes* next;
+
+}notes;
 
 int main ()
 {
 	
 
-
-	int playerspeed = 5;
 	int posx=64;
 	int posy=640;
 	int dir = 1;
+	int playerhp = 3;
+	int turn = 0;
 	
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
@@ -74,8 +92,24 @@ int main ()
 	Texture note7 = LoadTexture("si.png");
 
 	Timer turntimer = {0};
+
 	float turnduration = 3.0f;
+	float animationdur = 5.0f;
 	
+	notes* head = (notes*)malloc(sizeof(notes));
+	head->typenote = 1;
+	head->next = NULL;
+	notes* n = head;
+	notes* new = NULL;
+	for (int i = 2; i < 8; i++){
+		new = (notes*)malloc(sizeof(notes));
+		new->typenote = i;
+		new->next = NULL;
+		n->next = new;
+		n = n->next;
+	}
+	n = head;
+
 	// game loop
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
@@ -85,21 +119,32 @@ int main ()
 			if(IsKeyPressed(KEY_DOWN)) {
 				posy += 64;
 				dir = 1;
+				turn++;
 				StartTimer(&turntimer,turnduration);
 			}
 			if(IsKeyPressed(KEY_UP)) {
 				posy -= 64;
 				dir = 3;
+				turn++;
 				StartTimer(&turntimer,turnduration);
 			}
 			if(IsKeyPressed(KEY_RIGHT)) {
 				posx += 64;
 				dir = 2;
+				turn++;
 				StartTimer(&turntimer,turnduration);
 			}
 			if(IsKeyPressed(KEY_LEFT)) {
 				posx -= 64;
 				dir = 4;
+				turn++;
+				StartTimer(&turntimer,turnduration);
+			}
+			if(IsKeyPressed(KEY_ONE)){
+				shoot(dir, n->typenote);
+				n = n->next;
+				if (n->next == NULL) n = head;
+				turn++;
 				StartTimer(&turntimer,turnduration);
 			}
 		}
@@ -123,6 +168,7 @@ int main ()
 		if (dir == 3) DrawTexture(playersprite3, posx, posy, WHITE);
 		if (dir == 2) DrawTexture(playersprite2, posx, posy, WHITE);
 		if (dir == 4) DrawTexture(playersprite4, posx, posy, WHITE);
+
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();

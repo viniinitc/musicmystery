@@ -15,9 +15,6 @@ typedef struct{
 
 }notes;
 
-void action(KeyboardKey x){
-
-}
 
 // define a timer
 typedef struct
@@ -87,6 +84,8 @@ int main ()
 	notes notelist[7];
 	int posx=64;
 	int posy=640;
+	int firstblockx = 48;
+	int firstblocky = 708;
 	int dir = 1;
 	int playerhp = 3;
 	int turn = 0;
@@ -115,7 +114,9 @@ int main ()
 	Texture notesprite5 = LoadTexture("sol.png");
 	Texture notesprite6 = LoadTexture("la.png");
 	Texture notesprite7 = LoadTexture("si.png");
-
+	Texture floortest1 = LoadTexture("sprite.png");
+	Texture floortest2 = LoadTexture("spritefloorcorner.png");
+	Texture floortest3 = LoadTexture("spritefloornormal.png");
 	Timer turntimer = {0};
 
 	float turnduration = 1.0f;
@@ -136,7 +137,7 @@ int main ()
 		
 		if (TimerDone(&turntimer)){
 			if(IsKeyPressed(KEY_DOWN)) {
-				posy += 64;
+				posy += 96;
 				dir = 1;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -144,7 +145,7 @@ int main ()
 				shootmove(notelist);
 			}
 			if(IsKeyPressed(KEY_UP)) {
-				posy -= 64;
+				posy -= 96;
 				dir = 3;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -152,7 +153,7 @@ int main ()
 				shootmove(notelist);
 			}
 			if(IsKeyPressed(KEY_RIGHT)) {
-				posx += 64;
+				posx += 96;
 				dir = 2;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -160,7 +161,7 @@ int main ()
 				shootmove(notelist);
 			}
 			if(IsKeyPressed(KEY_LEFT)) {
-				posx -= 64;
+				posx -= 96;
 				dir = 4;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -200,7 +201,6 @@ int main ()
 			
 		}
 		
-
 		UpdateTimer(&turntimer);
 
 		int pcolx = posx+32; 
@@ -216,6 +216,7 @@ int main ()
 
 		// draw our texture to the screen
 		DrawCircle(pcolx,pcoly,1, GREEN);
+		DrawTexture(floortest1, firstblockx, firstblocky, WHITE);
 		DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 		DrawTexture(notesprite2, notelist[1].posnx, notelist[1].posny, WHITE);
 		DrawTexture(notesprite3, notelist[2].posnx, notelist[2].posny, WHITE);
@@ -235,6 +236,13 @@ int main ()
 
 	// cleanup
 	// unload our texture so it can be cleaned up
+	UnloadTexture(notesprite1);
+	UnloadTexture(notesprite2);
+	UnloadTexture(notesprite3);
+	UnloadTexture(notesprite4);
+	UnloadTexture(notesprite5);
+	UnloadTexture(notesprite6);
+	UnloadTexture(notesprite7);
 	UnloadTexture(playersprite1);
 	UnloadTexture(playersprite2);
 	UnloadTexture(playersprite3);

@@ -53,22 +53,21 @@ void shootmove(notes* x){
 
 	for(int i = 0; i < 7; i++){
 		
-		int mov = x->direct;
+		int mov = x[i].direct;
 			
 		if (mov == 1){
-			x->posny += 64;
+			x[i].posny += 64;
 		}
 		if (mov == 3){
-			x->posny -= 64;
+			x[i].posny -= 64;
 		}
 		if (mov == 2){
-			x->posnx += 64;
+			x[i].posnx += 64;
 		}
 		if (mov == 4){
-			x->posnx -= 64;
+			x[i].posnx -= 64;
 		}
 		
-		x = x->next;
 	}
 
 }
@@ -85,7 +84,7 @@ typedef struct{
 
 int main ()
 {
-	int notelist[7];
+	notes notelist[7];
 	int posx=64;
 	int posy=640;
 	int dir = 1;
@@ -113,7 +112,7 @@ int main ()
 	Texture notesprite2 = LoadTexture("re.png");
 	Texture notesprite3 = LoadTexture("mi.png");
 	Texture notesprite4 = LoadTexture("fa.png");
-	Texture notesprite5 = LoadTexture("so.png");
+	Texture notesprite5 = LoadTexture("sol.png");
 	Texture notesprite6 = LoadTexture("la.png");
 	Texture notesprite7 = LoadTexture("si.png");
 
@@ -137,7 +136,7 @@ int main ()
 	}
 	notes* note1 = head;
 	for (int i = 0; i < 7; i++){
-		notelist[i] = 0;
+		notelist[i].typenote = i+1;
 	}
 	n = head;
 	new = head;
@@ -155,7 +154,7 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
-				shootmove(new);
+				shootmove(notelist);
 				new = head;
 			}
 			if(IsKeyPressed(KEY_UP)) {
@@ -164,7 +163,7 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
-				shootmove(new);
+				shootmove(notelist);
 				new = head;
 			}
 			if(IsKeyPressed(KEY_RIGHT)) {
@@ -173,7 +172,7 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
-				shootmove(new);
+				shootmove(notelist);
 				new = head;
 			}
 			if(IsKeyPressed(KEY_LEFT)) {
@@ -182,32 +181,36 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
-				shootmove(new);
+				shootmove(notelist);
 				new = head;
 			}
+			
 			if(IsKeyPressed(KEY_SPACE) && turn != 0){
 				turn++;
 				
-				notecheck++;
 				
-				n->direct = dir;
-				n->posnx = posx;
-				n->posny = posy;
-				if(dir == 1) n->posny += 64;
-				if(dir == 3) n->posny -= 64;
-				if(dir == 2) n->posnx += 64;
-				if(dir == 4) n->posnx -= 64;
-				n->turnr = turn;
+				
+				notelist[notecheck].direct = dir;
+				notelist[notecheck].posnx = posx;
+				notelist[notecheck].posny = posy;
+				if(dir == 1) notelist[notecheck].posny += 64;
+				if(dir == 3) notelist[notecheck].posny -= 64;
+				if(dir == 2) notelist[notecheck].posnx += 64;
+				if(dir == 4) notelist[notecheck].posnx -= 64;
+				notelist[notecheck].turnr = turn;
 				
 				//shoot(n);
 				//n = n->next;
-				if (n == NULL) n = head;
 				StartTimer(&turntimer,turnduration);
-				shootmove(new);
+				shootmove(notelist);
 				new = head; //n = n->next; removed this for now so i can figure out the movement of the individual notes
 				turncom = turn;
 
 			}
+		}
+		if(IsKeyPressed(KEY_ONE)) {
+				notecheck++;
+				if (notecheck > 6) notecheck = 0;
 		}
 
 		if (turncom == turn){
@@ -233,7 +236,13 @@ int main ()
 
 		// draw our texture to the screen
 		DrawCircle(pcolx,pcoly,1, GREEN);
-		DrawTexture(notesprite1, n->posnx, n->posny, WHITE); //draw texture also to figure out the individual note movement
+		DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
+		DrawTexture(notesprite2, notelist[1].posnx, notelist[1].posny, WHITE);
+		DrawTexture(notesprite3, notelist[2].posnx, notelist[2].posny, WHITE);
+		DrawTexture(notesprite4, notelist[3].posnx, notelist[3].posny, WHITE);
+		DrawTexture(notesprite5, notelist[4].posnx, notelist[4].posny, WHITE);
+		DrawTexture(notesprite6, notelist[5].posnx, notelist[5].posny, WHITE);
+		DrawTexture(notesprite7, notelist[6].posnx, notelist[6].posny, WHITE);
 		if (dir == 1) DrawTexture(playersprite1, posx, posy, WHITE);
 		if (dir == 3) DrawTexture(playersprite3, posx, posy, WHITE);
 		if (dir == 2) DrawTexture(playersprite2, posx, posy, WHITE);

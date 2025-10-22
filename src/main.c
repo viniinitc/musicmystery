@@ -51,22 +51,25 @@ bool TimerDone(Timer* timer)
 
 void shootmove(notes* x){
 
-	int mov = x->direct;
-
-	if (mov == 1){
-		x->posny += 64;
+	for(int i = 0; i < 7; i++){
+		
+		int mov = x->direct;
+			
+		if (mov == 1){
+			x->posny += 64;
+		}
+		if (mov == 3){
+			x->posny -= 64;
+		}
+		if (mov == 2){
+			x->posnx += 64;
+		}
+		if (mov == 4){
+			x->posnx -= 64;
+		}
+		
+		x = x->next;
 	}
-	if (mov == 3){
-		x->posny -= 64;
-	}
-	if (mov == 2){
-		x->posnx += 64;
-	}
-	if (mov == 4){
-		x->posnx -= 64;
-	}
-
-	
 
 }
 
@@ -89,7 +92,8 @@ int main ()
 	int playerhp = 3;
 	int turn = 0;
 	int turncom;
-	
+	int notecheck = 0;
+
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
@@ -105,13 +109,13 @@ int main ()
 	Texture playersprite3 = LoadTexture("spritepback.png");
 	Texture playersprite2 = LoadTexture("spritepsideright.png");
 	Texture playersprite4 = LoadTexture("spritepsideleft.png");
-	Texture note1 = LoadTexture("do.png");
-	Texture note2 = LoadTexture("re.png");
-	Texture note3 = LoadTexture("mi.png");
-	Texture note4 = LoadTexture("fa.png");
-	Texture note5 = LoadTexture("so.png");
-	Texture note6 = LoadTexture("la.png");
-	Texture note7 = LoadTexture("si.png");
+	Texture notesprite1 = LoadTexture("do.png");
+	Texture notesprite2 = LoadTexture("re.png");
+	Texture notesprite3 = LoadTexture("mi.png");
+	Texture notesprite4 = LoadTexture("fa.png");
+	Texture notesprite5 = LoadTexture("so.png");
+	Texture notesprite6 = LoadTexture("la.png");
+	Texture notesprite7 = LoadTexture("si.png");
 
 	Timer turntimer = {0};
 
@@ -123,6 +127,7 @@ int main ()
 	head->next = NULL;
 	notes* n = head;
 	notes* new = NULL;
+	
 	for (int i = 2; i < 8; i++){
 		new = (notes*)malloc(sizeof(notes));
 		new->typenote = i;
@@ -130,10 +135,12 @@ int main ()
 		n->next = new;
 		n = n->next;
 	}
+	notes* note1 = head;
 	for (int i = 0; i < 7; i++){
-		notelist[i] = i+1;// so i can navigate through notes and only shoot these
+		notelist[i] = 0;
 	}
 	n = head;
+	new = head;
 
 	// game loop
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
@@ -148,7 +155,8 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
-				shootmove(n);
+				shootmove(new);
+				new = head;
 			}
 			if(IsKeyPressed(KEY_UP)) {
 				posy -= 64;
@@ -156,7 +164,8 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
-				shootmove(n);
+				shootmove(new);
+				new = head;
 			}
 			if(IsKeyPressed(KEY_RIGHT)) {
 				posx += 64;
@@ -164,7 +173,8 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
-				shootmove(n);
+				shootmove(new);
+				new = head;
 			}
 			if(IsKeyPressed(KEY_LEFT)) {
 				posx -= 64;
@@ -172,12 +182,15 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
-				shootmove(n);
+				shootmove(new);
+				new = head;
 			}
 			if(IsKeyPressed(KEY_SPACE) && turn != 0){
 				turn++;
+				
+				notecheck++;
+				
 				n->direct = dir;
-
 				n->posnx = posx;
 				n->posny = posy;
 				if(dir == 1) n->posny += 64;
@@ -185,12 +198,13 @@ int main ()
 				if(dir == 2) n->posnx += 64;
 				if(dir == 4) n->posnx -= 64;
 				n->turnr = turn;
-
-				//shoot(n);
 				
+				//shoot(n);
+				//n = n->next;
+				if (n == NULL) n = head;
 				StartTimer(&turntimer,turnduration);
-				shootmove(n);
-				//n = n->next; removed this for now so i can figure out the movement of the individual notes
+				shootmove(new);
+				new = head; //n = n->next; removed this for now so i can figure out the movement of the individual notes
 				turncom = turn;
 
 			}
@@ -219,7 +233,7 @@ int main ()
 
 		// draw our texture to the screen
 		DrawCircle(pcolx,pcoly,1, GREEN);
-		DrawTexture(note1, n->posnx, n->posny, WHITE); //draw texture also to figure out the individual note movement
+		DrawTexture(notesprite1, n->posnx, n->posny, WHITE); //draw texture also to figure out the individual note movement
 		if (dir == 1) DrawTexture(playersprite1, posx, posy, WHITE);
 		if (dir == 3) DrawTexture(playersprite3, posx, posy, WHITE);
 		if (dir == 2) DrawTexture(playersprite2, posx, posy, WHITE);

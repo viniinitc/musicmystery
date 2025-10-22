@@ -121,25 +121,12 @@ int main ()
 	float turnduration = 1.0f;
 	float animationdur = 5.0f;
 	
-	notes* head = (notes*)malloc(sizeof(notes));
-	head->typenote = 1;
-	head->next = NULL;
-	notes* n = head;
-	notes* new = NULL;
 	
-	for (int i = 2; i < 8; i++){
-		new = (notes*)malloc(sizeof(notes));
-		new->typenote = i;
-		new->next = NULL;
-		n->next = new;
-		n = n->next;
-	}
-	notes* note1 = head;
+
 	for (int i = 0; i < 7; i++){
 		notelist[i].typenote = i+1;
 	}
-	n = head;
-	new = head;
+
 
 	// game loop
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
@@ -155,7 +142,6 @@ int main ()
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
 				shootmove(notelist);
-				new = head;
 			}
 			if(IsKeyPressed(KEY_UP)) {
 				posy -= 64;
@@ -164,7 +150,6 @@ int main ()
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
 				shootmove(notelist);
-				new = head;
 			}
 			if(IsKeyPressed(KEY_RIGHT)) {
 				posx += 64;
@@ -173,7 +158,6 @@ int main ()
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
 				shootmove(notelist);
-				new = head;
 			}
 			if(IsKeyPressed(KEY_LEFT)) {
 				posx -= 64;
@@ -182,7 +166,6 @@ int main ()
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
 				shootmove(notelist);
-				new = head;
 			}
 			
 			if(IsKeyPressed(KEY_SPACE) && turn != 0){
@@ -202,8 +185,7 @@ int main ()
 				//shoot(n);
 				//n = n->next;
 				StartTimer(&turntimer,turnduration);
-				shootmove(notelist);
-				new = head; //n = n->next; removed this for now so i can figure out the movement of the individual notes
+				shootmove(notelist); //n = n->next; removed this for now so i can figure out the movement of the individual notes
 				turncom = turn;
 
 			}
@@ -218,8 +200,6 @@ int main ()
 			
 		}
 		
-		
-		if (n == NULL) n = head;
 
 		UpdateTimer(&turntimer);
 

@@ -6,6 +6,18 @@
 
 typedef struct{
 
+	int first;
+	int last;
+	int cur;
+
+	float speed;
+	float durationleft;
+
+}animation;
+
+
+typedef struct{
+
 	int typenote;
 	int posny;
 	int posnx;
@@ -103,7 +115,7 @@ int main ()
 	SearchAndSetResourceDir("resources");
 
 	// Load a texture from the resources directory
-	Texture playersprite1 = LoadTexture("spritepfront.png");
+	
 	Texture playersprite3 = LoadTexture("spritepback.png");
 	Texture playersprite2 = LoadTexture("spritepsideright.png");
 	Texture playersprite4 = LoadTexture("spritepsideleft.png");
@@ -114,15 +126,22 @@ int main ()
 	Texture notesprite5 = LoadTexture("sol.png");
 	Texture notesprite6 = LoadTexture("la.png");
 	Texture notesprite7 = LoadTexture("si.png");
-	Texture floortest1 = LoadTexture("sprite.png");
-	Texture floortest2 = LoadTexture("spritefloorcorner.png");
-	Texture floortest3 = LoadTexture("spritefloornormal.png");
+	Texture2D floortest1 = LoadTexture("flooranimation3.png");
+	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
+	
 	Timer turntimer = {0};
 
 	float turnduration = 1.0f;
 	float animationdur = 5.0f;
-	
-	
+
+	Vector2 position = { 350.0f, 280.0f};
+	Vector2 positionplayer = { 350.0f, 210.0f};
+	Rectangle frameRec = {0.0f, 0.0f, (float)floortest1.width/16, (float)floortest1.height};
+	Rectangle frameRecplayer = {0.0f, 0.0f, (float)playersprite1.width/16, (float)playersprite1.height};
+
+	int currentFrame = 0;
+	int framesCounter = 0;
+	int framesSpeed = 12;
 
 	for (int i = 0; i < 7; i++){
 		notelist[i].typenote = i+1;
@@ -133,6 +152,18 @@ int main ()
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
 
+		framesCounter++;
+
+		if (framesCounter >= (60/framesSpeed))
+        {
+            framesCounter = 0;
+            currentFrame++;
+
+            if (currentFrame > 15) currentFrame = 0;
+
+            frameRec.x = (float)currentFrame*(float)floortest1.width/16;
+			frameRecplayer.x = (float)currentFrame*(float)playersprite1.width/16;
+        }
 		
 		
 		if (TimerDone(&turntimer)){
@@ -216,7 +247,8 @@ int main ()
 
 		// draw our texture to the screen
 		DrawCircle(pcolx,pcoly,1, GREEN);
-		DrawTexture(floortest1, firstblockx, firstblocky, WHITE);
+		DrawTextureRec(floortest1, frameRec, position, WHITE);
+		DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
 		DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 		DrawTexture(notesprite2, notelist[1].posnx, notelist[1].posny, WHITE);
 		DrawTexture(notesprite3, notelist[2].posnx, notelist[2].posny, WHITE);
@@ -224,7 +256,7 @@ int main ()
 		DrawTexture(notesprite5, notelist[4].posnx, notelist[4].posny, WHITE);
 		DrawTexture(notesprite6, notelist[5].posnx, notelist[5].posny, WHITE);
 		DrawTexture(notesprite7, notelist[6].posnx, notelist[6].posny, WHITE);
-		if (dir == 1) DrawTexture(playersprite1, posx, posy, WHITE);
+	
 		if (dir == 3) DrawTexture(playersprite3, posx, posy, WHITE);
 		if (dir == 2) DrawTexture(playersprite2, posx, posy, WHITE);
 		if (dir == 4) DrawTexture(playersprite4, posx, posy, WHITE);
@@ -243,6 +275,7 @@ int main ()
 	UnloadTexture(notesprite5);
 	UnloadTexture(notesprite6);
 	UnloadTexture(notesprite7);
+	UnloadTexture(floortest1);
 	UnloadTexture(playersprite1);
 	UnloadTexture(playersprite2);
 	UnloadTexture(playersprite3);

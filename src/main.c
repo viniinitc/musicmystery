@@ -108,6 +108,7 @@ int main ()
 	int notecheck = 0;
 	int cont = 0;
 
+	bool collision = false;
 
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
@@ -154,8 +155,14 @@ int main ()
 	}
 
 
-	int positionx;
-	int positiony;
+	int position1x;
+	int position1y;
+	int position2x;
+	int position2y;
+	int position3x;
+	int position3y;
+	int position4x;
+	int position4y;
 
 	
 
@@ -163,6 +170,11 @@ int main ()
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
 
+		//remenber to create more collision checks for the remaining balls
+		Vector2 contact = {(float)position1x, (float)position1y};
+		collision = CheckCollisionPointCircle(GetMousePosition(),contact, 20.0);
+
+		
 		framesCounter++;
 
 		if (framesCounter >= (60/framesSpeed))
@@ -177,7 +189,7 @@ int main ()
 			frameRecplayer2.x = (float)currentFrame*(float)playersprite1.width/16;
         }
 		
-		
+		//remember to update player movement 
 		if (TimerDone(&turntimer)){
 			if(IsKeyPressed(KEY_DOWN)) {
 				posy += 96;
@@ -240,14 +252,27 @@ int main ()
 		}
 
 		if (IsKeyPressed(KEY_CAPS_LOCK)) {
-		
-			positionx = (int)positionplayer.x;
-			positiony = (int)positionplayer.y; 
+			
+			//movement balls
+
+			position1x = (int)positionplayer.x + 154;
+			position1y = (int)positionplayer.y + 65; 
+
+			position2x = (int)positionplayer.x;
+			position2y = (int)positionplayer.y + 45; 
+
+			position3x = (int)positionplayer.x + 144;
+			position3y = (int)positionplayer.y + 170; 
+
+			position4x = (int)positionplayer.x;
+			position4y = (int)positionplayer.y + 160; 
 			
 
 			
 		}
 		
+
+
 		UpdateTimer(&turntimer);
 
 		int pcolx = posx+32; 
@@ -265,7 +290,7 @@ int main ()
 		
 
 		
-		
+		//create if statements so things only get drawn when i need them
 		
 		DrawTexture(floortest1, 20, 40, WHITE);
 		if (dir == 1) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
@@ -277,17 +302,23 @@ int main ()
 		DrawTexture(notesprite5, notelist[4].posnx, notelist[4].posny, WHITE);
 		DrawTexture(notesprite6, notelist[5].posnx, notelist[5].posny, WHITE);
 		DrawTexture(notesprite7, notelist[6].posnx, notelist[6].posny, WHITE);
+
+		//temporary mouse text so i can figure out positions
+		DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
+                Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
+
+		if (collision) DrawText("come on", 100, 100, 100, BLACK);
+
+		DrawCircle(position1x ,position1y, 20, GRAY);
+
+		DrawCircle(position2x ,position2y , 20, GRAY);
+
+		DrawCircle(position3x,position3y, 20, GRAY);
+
+		DrawCircle(position4x ,position4y , 20, GRAY);
 		
-		DrawCircle(positionx + 154,positiony + 65, 20, GRAY);
 
-		DrawCircle(positionx ,positiony + 45, 20, GRAY);
-
-		DrawCircle(positionx + 144,positiony + 170, 20, GRAY);
-
-		DrawCircle(positionx ,positiony + 160, 20, GRAY);
-		
-
-		
+		//att player sprites
 		if (dir == 2) DrawTexture(playersprite2, posx, posy, WHITE);
 		if (dir == 4) DrawTexture(playersprite4, posx, posy, WHITE);
 

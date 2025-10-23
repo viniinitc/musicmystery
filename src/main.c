@@ -16,6 +16,8 @@ typedef struct{
 }animation;
 
 
+
+
 typedef struct{
 
 	int typenote;
@@ -94,6 +96,7 @@ typedef struct{
 int main ()
 {
 	notes notelist[7];
+	
 	int posx=64;
 	int posy=640;
 	int firstblockx = 48;
@@ -103,12 +106,14 @@ int main ()
 	int turn = 0;
 	int turncom;
 	int notecheck = 0;
+	int cont = 0;
+
 
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
 	// Create the window and OpenGL context
-	InitWindow(1280, 800, "Hello Raylib");
+	InitWindow(1280, 900, "Hello Raylib");
 	SetTargetFPS(60);
 
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
@@ -117,7 +122,6 @@ int main ()
 	// Load a texture from the resources directory
 	
 	Texture playersprite3 = LoadTexture("spritepback.png");
-	Texture playersprite2 = LoadTexture("spritepsideright.png");
 	Texture playersprite4 = LoadTexture("spritepsideleft.png");
 	Texture notesprite1 = LoadTexture("do.png");
 	Texture notesprite2 = LoadTexture("re.png");
@@ -126,8 +130,9 @@ int main ()
 	Texture notesprite5 = LoadTexture("sol.png");
 	Texture notesprite6 = LoadTexture("la.png");
 	Texture notesprite7 = LoadTexture("si.png");
-	Texture2D floortest1 = LoadTexture("flooranimation3.png");
+	Texture2D floortest1 = LoadTexture("floor1.png");
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
+	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
 	
 	Timer turntimer = {0};
 
@@ -135,9 +140,10 @@ int main ()
 	float animationdur = 5.0f;
 
 	Vector2 position = { 350.0f, 280.0f};
-	Vector2 positionplayer = { 350.0f, 210.0f};
+	Vector2 positionplayer = { 40.0f, 272.0f};
 	Rectangle frameRec = {0.0f, 0.0f, (float)floortest1.width/16, (float)floortest1.height};
 	Rectangle frameRecplayer = {0.0f, 0.0f, (float)playersprite1.width/16, (float)playersprite1.height};
+	Rectangle frameRecplayer2 = {0.0f, 0.0f, (float)playersprite2.width/16, (float)playersprite2.height};
 
 	int currentFrame = 0;
 	int framesCounter = 0;
@@ -147,6 +153,11 @@ int main ()
 		notelist[i].typenote = i+1;
 	}
 
+
+	int positionx;
+	int positiony;
+
+	
 
 	// game loop
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
@@ -163,6 +174,7 @@ int main ()
 
             frameRec.x = (float)currentFrame*(float)floortest1.width/16;
 			frameRecplayer.x = (float)currentFrame*(float)playersprite1.width/16;
+			frameRecplayer2.x = (float)currentFrame*(float)playersprite1.width/16;
         }
 		
 		
@@ -227,7 +239,11 @@ int main ()
 				if (notecheck > 6) notecheck = 0;
 		}
 
-		if (turncom == turn){
+		if (IsKeyPressed(KEY_CAPS_LOCK)) {
+		
+			positionx = (int)positionplayer.x;
+			positiony = (int)positionplayer.y; 
+			
 
 			
 		}
@@ -246,9 +262,14 @@ int main ()
 		DrawText("Hello Raylib ", 200,200,20,WHITE);
 
 		// draw our texture to the screen
-		DrawCircle(pcolx,pcoly,1, GREEN);
-		DrawTextureRec(floortest1, frameRec, position, WHITE);
-		DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
+		
+
+		
+		
+		
+		DrawTexture(floortest1, 20, 40, WHITE);
+		if (dir == 1) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
+		if (dir == 3) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
 		DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 		DrawTexture(notesprite2, notelist[1].posnx, notelist[1].posny, WHITE);
 		DrawTexture(notesprite3, notelist[2].posnx, notelist[2].posny, WHITE);
@@ -256,8 +277,17 @@ int main ()
 		DrawTexture(notesprite5, notelist[4].posnx, notelist[4].posny, WHITE);
 		DrawTexture(notesprite6, notelist[5].posnx, notelist[5].posny, WHITE);
 		DrawTexture(notesprite7, notelist[6].posnx, notelist[6].posny, WHITE);
-	
-		if (dir == 3) DrawTexture(playersprite3, posx, posy, WHITE);
+		
+		DrawCircle(positionx + 154,positiony + 65, 20, GRAY);
+
+		DrawCircle(positionx ,positiony + 45, 20, GRAY);
+
+		DrawCircle(positionx + 144,positiony + 170, 20, GRAY);
+
+		DrawCircle(positionx ,positiony + 160, 20, GRAY);
+		
+
+		
 		if (dir == 2) DrawTexture(playersprite2, posx, posy, WHITE);
 		if (dir == 4) DrawTexture(playersprite4, posx, posy, WHITE);
 
@@ -280,6 +310,7 @@ int main ()
 	UnloadTexture(playersprite2);
 	UnloadTexture(playersprite3);
 	UnloadTexture(playersprite4);
+	
 
 	// destroy the window and cleanup the OpenGL context
 	CloseWindow();

@@ -108,7 +108,10 @@ int main ()
 	int notecheck = 0;
 	int cont = 0;
 
-	bool collision = false;
+	bool collisionball1 = false;
+	bool collisionball2 = false;
+	bool collisionball3 = false;
+	bool collisionball4 = false;
 
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
@@ -122,8 +125,8 @@ int main ()
 
 	// Load a texture from the resources directory
 	
-	Texture playersprite3 = LoadTexture("spritepback.png");
-	Texture playersprite4 = LoadTexture("spritepsideleft.png");
+	Texture playersprite3 = LoadTexture("playersprite3.png");
+	Texture playersprite4 = LoadTexture("playersprite4.png");
 	Texture notesprite1 = LoadTexture("do.png");
 	Texture notesprite2 = LoadTexture("re.png");
 	Texture notesprite3 = LoadTexture("mi.png");
@@ -171,9 +174,14 @@ int main ()
 	{
 
 		//remenber to create more collision checks for the remaining balls
-		Vector2 contact = {(float)position1x, (float)position1y};
-		collision = CheckCollisionPointCircle(GetMousePosition(),contact, 20.0);
-
+		Vector2 contact1 = {(float)position1x, (float)position1y};
+		Vector2 contact2 = {(float)position2x, (float)position2y};
+		Vector2 contact3 = {(float)position3x, (float)position3y};
+		Vector2 contact4 = {(float)position4x, (float)position4y};
+		collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
+		collisionball2 = CheckCollisionPointCircle(GetMousePosition(),contact2, 20.0);
+		collisionball3 = CheckCollisionPointCircle(GetMousePosition(),contact3, 20.0);
+		collisionball4 = CheckCollisionPointCircle(GetMousePosition(),contact4, 20.0);
 		
 		framesCounter++;
 
@@ -192,7 +200,8 @@ int main ()
 		//remember to update player movement 
 		if (TimerDone(&turntimer)){
 			if(IsKeyPressed(KEY_DOWN)) {
-				posy += 96;
+				positionplayer.x += 74;
+				positionplayer.y += 54;
 				dir = 1;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -201,7 +210,7 @@ int main ()
 			}
 			if(IsKeyPressed(KEY_UP)) {
 				posy -= 96;
-				dir = 3;
+				dir = 4;
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
@@ -217,7 +226,7 @@ int main ()
 			}
 			if(IsKeyPressed(KEY_LEFT)) {
 				posx -= 96;
-				dir = 4;
+				dir = 3;
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
@@ -295,6 +304,8 @@ int main ()
 		DrawTexture(floortest1, 20, 40, WHITE);
 		if (dir == 1) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
 		if (dir == 3) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
+		if (dir == 2) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
+		if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
 		DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 		DrawTexture(notesprite2, notelist[1].posnx, notelist[1].posny, WHITE);
 		DrawTexture(notesprite3, notelist[2].posnx, notelist[2].posny, WHITE);
@@ -307,7 +318,10 @@ int main ()
 		DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
                 Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
 
-		if (collision) DrawText("come on", 100, 100, 100, BLACK);
+		if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
+		if (collisionball2) DrawText("2", 100, 100, 100, BLACK);
+		if (collisionball3) DrawText("3", 100, 100, 100, BLACK);
+		if (collisionball4) DrawText("4", 100, 100, 100, BLACK);
 
 		DrawCircle(position1x ,position1y, 20, GRAY);
 
@@ -317,10 +331,6 @@ int main ()
 
 		DrawCircle(position4x ,position4y , 20, GRAY);
 		
-
-		//att player sprites
-		if (dir == 2) DrawTexture(playersprite2, posx, posy, WHITE);
-		if (dir == 4) DrawTexture(playersprite4, posx, posy, WHITE);
 
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)

@@ -4,17 +4,6 @@
 #include "raymath.h"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
-typedef struct{
-
-	int first;
-	int last;
-	int cur;
-
-	float speed;
-	float durationleft;
-
-}animation;
-
 
 
 
@@ -28,7 +17,6 @@ typedef struct{
 	Rectangle rect;
 	Vector2 vect;
 	Texture2D sprite;
-	
 
 }notes;
 
@@ -94,7 +82,9 @@ typedef struct{
 
 	int hp;
 	int type;
-	struct enemytype* next;
+	Texture2D sprite;
+	Vector2 vetor;
+	Rectangle rect;
 
 }enemytype;
 
@@ -103,7 +93,8 @@ typedef struct{
 int main ()
 {
 	notes notelist[7];
-	
+	enemytype enemies[7];
+
 	int posx=64;
 	int posy=640;
 	int firstblockx = 48;
@@ -141,6 +132,13 @@ int main ()
 	notelist[4].sprite = LoadTexture("sol.png");
 	notelist[5].sprite = LoadTexture("la.png");
 	notelist[6].sprite = LoadTexture("si.png");
+	enemies[0].sprite = LoadTexture("enemy1.png");
+	enemies[1].sprite = LoadTexture("enemy2.png");
+	enemies[2].sprite = LoadTexture("enemy3.png");
+	enemies[3].sprite = LoadTexture("enemy4.png");
+	enemies[4].sprite = LoadTexture("enemy5.png");
+	enemies[5].sprite = LoadTexture("enemy6.png");
+	enemies[6].sprite = LoadTexture("enemy7.png");
 	Texture2D floortest1 = LoadTexture("floor1.png");
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
@@ -168,7 +166,13 @@ int main ()
 		notelist[i].rect.width = (float)notelist[i].sprite.width/16;
 		notelist[i].rect.x = 0.0f;
 		notelist[i].rect.y = 0.0f;
-		
+		notelist[i].turnr = 0;
+		enemies[i].type = i+1;
+		enemies[i].hp = 2;
+		enemies[i].rect.x = 0.0f;
+		enemies[i].rect.y = 0.0f;
+		enemies[i].rect.height = (float)enemies[i].sprite.height;
+		enemies[i].rect.width = (float)enemies[i].sprite.width;
 	}
 
 
@@ -343,7 +347,7 @@ int main ()
 		if (dir == 2) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
 		if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
 		for (int i = 0; i < 7; i++){
-			DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
+			if (notelist[i].turnr > 0) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
 		}
 		//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 

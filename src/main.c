@@ -25,7 +25,10 @@ typedef struct{
 	int posnx;
 	int direct;
 	int turnr;
-	struct notes* next;
+	Rectangle rect;
+	Vector2 vect;
+	Texture2D sprite;
+	
 
 }notes;
 
@@ -67,16 +70,20 @@ void shootmove(notes* x){
 		int mov = x[i].direct;
 			
 		if (mov == 1){
-			x[i].posny += 64;
+			x[i].posnx += 80;
+			x[i].posny += 50;
 		}
 		if (mov == 3){
-			x[i].posny -= 64;
+			x[i].posnx -= 80;
+			x[i].posny += 50;
 		}
 		if (mov == 2){
-			x[i].posnx += 64;
+			x[i].posnx += 80;
+			x[i].posny -= 50;
 		}
 		if (mov == 4){
-			x[i].posnx -= 64;
+			x[i].posnx -= 80;
+			x[i].posny -= 50;
 		}
 		
 	}
@@ -127,13 +134,13 @@ int main ()
 	
 	Texture playersprite3 = LoadTexture("playersprite3.png");
 	Texture playersprite4 = LoadTexture("playersprite4.png");
-	Texture notesprite1 = LoadTexture("do.png");
-	Texture notesprite2 = LoadTexture("re.png");
-	Texture notesprite3 = LoadTexture("mi.png");
-	Texture notesprite4 = LoadTexture("fa.png");
-	Texture notesprite5 = LoadTexture("sol.png");
-	Texture notesprite6 = LoadTexture("la.png");
-	Texture notesprite7 = LoadTexture("si.png");
+	notelist[0].sprite = LoadTexture("do.png");
+	notelist[1].sprite = LoadTexture("re.png");
+	notelist[2].sprite = LoadTexture("mi.png");
+	notelist[3].sprite = LoadTexture("fa.png");
+	notelist[4].sprite = LoadTexture("sol.png");
+	notelist[5].sprite = LoadTexture("la.png");
+	notelist[6].sprite = LoadTexture("si.png");
 	Texture2D floortest1 = LoadTexture("floor1.png");
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
@@ -144,17 +151,24 @@ int main ()
 	float animationdur = 5.0f;
 
 	Vector2 position = { 350.0f, 280.0f};
-	Vector2 positionplayer = { 40.0f, 272.0f};
+	Vector2 positionplayer = { 30.0f, 337.0f};
 	Rectangle frameRec = {0.0f, 0.0f, (float)floortest1.width/16, (float)floortest1.height};
 	Rectangle frameRecplayer = {0.0f, 0.0f, (float)playersprite1.width/16, (float)playersprite1.height};
 	Rectangle frameRecplayer2 = {0.0f, 0.0f, (float)playersprite2.width/16, (float)playersprite2.height};
+	
 
+	
 	int currentFrame = 0;
 	int framesCounter = 0;
 	int framesSpeed = 12;
 
 	for (int i = 0; i < 7; i++){
 		notelist[i].typenote = i+1;
+		notelist[i].rect.height = (float)notelist[i].sprite.height;
+		notelist[i].rect.width = (float)notelist[i].sprite.width/16;
+		notelist[i].rect.x = 0.0f;
+		notelist[i].rect.y = 0.0f;
+		
 	}
 
 
@@ -195,13 +209,17 @@ int main ()
             frameRec.x = (float)currentFrame*(float)floortest1.width/16;
 			frameRecplayer.x = (float)currentFrame*(float)playersprite1.width/16;
 			frameRecplayer2.x = (float)currentFrame*(float)playersprite1.width/16;
+			for (int i = 0; i < 7; i++){
+				notelist[i].rect.x = (float)currentFrame*(float)notelist[i].sprite.width/16;
+			}
+			
         }
 		
 		//remember to update player movement 
 		if (TimerDone(&turntimer)){
 			if(IsKeyPressed(KEY_DOWN)) {
-				positionplayer.x += 74;
-				positionplayer.y += 54;
+				positionplayer.x += 80;
+				positionplayer.y += 50;
 				dir = 1;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -209,7 +227,8 @@ int main ()
 				shootmove(notelist);
 			}
 			if(IsKeyPressed(KEY_UP)) {
-				posy -= 96;
+				positionplayer.x -= 80;
+				positionplayer.y -= 50;
 				dir = 4;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -217,7 +236,8 @@ int main ()
 				shootmove(notelist);
 			}
 			if(IsKeyPressed(KEY_RIGHT)) {
-				posx += 96;
+				positionplayer.x += 80;
+				positionplayer.y -= 50;
 				dir = 2;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -225,7 +245,8 @@ int main ()
 				shootmove(notelist);
 			}
 			if(IsKeyPressed(KEY_LEFT)) {
-				posx -= 96;
+				positionplayer.x -= 80;
+				positionplayer.y += 50;
 				dir = 3;
 				turn++;
 				StartTimer(&turntimer,turnduration);
@@ -239,18 +260,29 @@ int main ()
 				
 				
 				notelist[notecheck].direct = dir;
-				notelist[notecheck].posnx = posx;
-				notelist[notecheck].posny = posy;
-				if(dir == 1) notelist[notecheck].posny += 64;
-				if(dir == 3) notelist[notecheck].posny -= 64;
-				if(dir == 2) notelist[notecheck].posnx += 64;
-				if(dir == 4) notelist[notecheck].posnx -= 64;
+				notelist[notecheck].posnx = positionplayer.x;
+				notelist[notecheck].posny = positionplayer.y;
+				if(dir == 1) {
+					notelist[notecheck].posny += 70;
+					notelist[notecheck].posnx += 30;
+				}
+				if(dir == 2) {
+					notelist[notecheck].posny += 70;
+					notelist[notecheck].posnx += 35;
+				}
+				if(dir == 3) {
+					notelist[notecheck].posny += 70;
+					notelist[notecheck].posnx += 30;
+				}
+				if(dir == 4) {
+					notelist[notecheck].posny += 80;
+					notelist[notecheck].posnx += 30;
+				}
 				notelist[notecheck].turnr = turn;
 				
-				//shoot(n);
-				//n = n->next;
+
 				StartTimer(&turntimer,turnduration);
-				shootmove(notelist); //n = n->next; removed this for now so i can figure out the movement of the individual notes
+				shootmove(notelist); 
 				turncom = turn;
 
 			}
@@ -300,19 +332,21 @@ int main ()
 
 		
 		//create if statements so things only get drawn when i need them
+		for (int i = 0; i < 7; i++){
+			notelist[i].vect.x = notelist[i].posnx;
+			notelist[i].vect.y = notelist[i].posny;
+		}
 		
 		DrawTexture(floortest1, 20, 40, WHITE);
 		if (dir == 1) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
 		if (dir == 3) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
 		if (dir == 2) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
 		if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
-		DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
-		DrawTexture(notesprite2, notelist[1].posnx, notelist[1].posny, WHITE);
-		DrawTexture(notesprite3, notelist[2].posnx, notelist[2].posny, WHITE);
-		DrawTexture(notesprite4, notelist[3].posnx, notelist[3].posny, WHITE);
-		DrawTexture(notesprite5, notelist[4].posnx, notelist[4].posny, WHITE);
-		DrawTexture(notesprite6, notelist[5].posnx, notelist[5].posny, WHITE);
-		DrawTexture(notesprite7, notelist[6].posnx, notelist[6].posny, WHITE);
+		for (int i = 0; i < 7; i++){
+			DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
+		}
+		//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
+
 
 		//temporary mouse text so i can figure out positions
 		DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
@@ -339,13 +373,10 @@ int main ()
 
 	// cleanup
 	// unload our texture so it can be cleaned up
-	UnloadTexture(notesprite1);
-	UnloadTexture(notesprite2);
-	UnloadTexture(notesprite3);
-	UnloadTexture(notesprite4);
-	UnloadTexture(notesprite5);
-	UnloadTexture(notesprite6);
-	UnloadTexture(notesprite7);
+	for (int i = 0; i < 7; i++){
+		UnloadTexture(notelist[i].sprite);
+	}
+
 	UnloadTexture(floortest1);
 	UnloadTexture(playersprite1);
 	UnloadTexture(playersprite2);

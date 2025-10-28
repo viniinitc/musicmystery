@@ -17,6 +17,7 @@ typedef struct{
 	Rectangle rect;
 	Vector2 vect;
 	Texture2D sprite;
+	bool collision;
 
 }notes;
 
@@ -58,8 +59,10 @@ void shootmove(notes* x){
 		int mov = x[i].direct;
 			
 		if (mov == 1){
+
 			x[i].posnx += 80;
 			x[i].posny += 50;
+			
 		}
 		if (mov == 3){
 			x[i].posnx -= 80;
@@ -82,9 +85,13 @@ typedef struct{
 
 	int hp;
 	int type;
+	int enemyx;
+	int enemyy;
+
 	Texture2D sprite;
 	Vector2 vetor;
 	Rectangle rect;
+	bool collision;
 
 }enemytype;
 
@@ -95,6 +102,8 @@ int main ()
 	notes notelist[7];
 	enemytype enemies[7];
 
+	int exitladderx = 1160;
+	int exitladdery = 180;
 	int posx=64;
 	int posy=640;
 	int firstblockx = 48;
@@ -125,6 +134,8 @@ int main ()
 	
 	Texture playersprite3 = LoadTexture("playersprite3.png");
 	Texture playersprite4 = LoadTexture("playersprite4.png");
+	Texture exitladder = LoadTexture("ladder.png");
+	Texture playersoul = LoadTexture("playersoul.png");
 	notelist[0].sprite = LoadTexture("do.png");
 	notelist[1].sprite = LoadTexture("re.png");
 	notelist[2].sprite = LoadTexture("mi.png");
@@ -144,8 +155,11 @@ int main ()
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
 	
 	Timer turntimer = {0};
+	Timer notetimer = {0};
 
+	
 	float turnduration = 1.0f;
+	float notetimerduration = turnduration/20;
 	float animationdur = 5.0f;
 
 	Vector2 position = { 350.0f, 280.0f};
@@ -153,7 +167,8 @@ int main ()
 	Rectangle frameRec = {0.0f, 0.0f, (float)floortest1.width/16, (float)floortest1.height};
 	Rectangle frameRecplayer = {0.0f, 0.0f, (float)playersprite1.width/16, (float)playersprite1.height};
 	Rectangle frameRecplayer2 = {0.0f, 0.0f, (float)playersprite2.width/16, (float)playersprite2.height};
-	
+	int soulposx = (int)positionplayer.x; 
+	int soulposy = (int)positionplayer.y;
 
 	
 	int currentFrame = 0;
@@ -167,12 +182,16 @@ int main ()
 		notelist[i].rect.x = 0.0f;
 		notelist[i].rect.y = 0.0f;
 		notelist[i].turnr = 0;
+		notelist[i].collision = false;
 		enemies[i].type = i+1;
 		enemies[i].hp = 2;
 		enemies[i].rect.x = 0.0f;
 		enemies[i].rect.y = 0.0f;
 		enemies[i].rect.height = (float)enemies[i].sprite.height;
 		enemies[i].rect.width = (float)enemies[i].sprite.width;
+		enemies[i].collision = false;
+		enemies[i].enemyx = GetRandomValue(600, 1050);
+		enemies[i].enemyy = GetRandomValue(20,370);
 	}
 
 
@@ -191,11 +210,18 @@ int main ()
 	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
 
-		//remenber to create more collision checks for the remaining balls
+		
 		Vector2 contact1 = {(float)position1x, (float)position1y};
 		Vector2 contact2 = {(float)position2x, (float)position2y};
 		Vector2 contact3 = {(float)position3x, (float)position3y};
 		Vector2 contact4 = {(float)position4x, (float)position4y};
+		for (int i = 0; i < 7; i++){
+			for (int j = 0; j < 7; j++){
+				enemies[i].collision = CheckCollisionRecs(enemies[i].rect,notelist[j].rect);
+
+			}
+		}
+		
 		collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
 		collisionball2 = CheckCollisionPointCircle(GetMousePosition(),contact2, 20.0);
 		collisionball3 = CheckCollisionPointCircle(GetMousePosition(),contact3, 20.0);
@@ -228,6 +254,7 @@ int main ()
 				turn++;
 				StartTimer(&turntimer,turnduration);
 				turncom = turn;
+				StartTimer(&notetimer, notetimerduration);
 				shootmove(notelist);
 			}
 			if(IsKeyPressed(KEY_UP)) {
@@ -342,6 +369,8 @@ int main ()
 		}
 		
 		DrawTexture(floortest1, 20, 40, WHITE);
+		DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
+		DrawTexture(playersoul, soulposx, soulposy, WHITE);
 		if (dir == 1) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
 		if (dir == 3) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
 		if (dir == 2) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
@@ -351,11 +380,15 @@ int main ()
 		}
 		//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 
-
+	
 		//temporary mouse text so i can figure out positions
 		DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
                 Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
 
+
+		for (int i = 0; i < 7; i++){
+			if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
+		}
 		if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
 		if (collisionball2) DrawText("2", 100, 100, 100, BLACK);
 		if (collisionball3) DrawText("3", 100, 100, 100, BLACK);

@@ -394,7 +394,8 @@ int main ()
 
 
 		for (int i = 0; i < 7; i++){
-			if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
+			//if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); commenting this for now so i can figure collision out
+			DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
 		}
 		if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
 		if (collisionball2) DrawText("2", 100, 100, 100, BLACK);

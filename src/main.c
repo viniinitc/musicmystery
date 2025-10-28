@@ -114,6 +114,7 @@ int main ()
 	int turncom;
 	int notecheck = 0;
 	int cont = 0;
+	Vector2 enemiespossiblepossitions[7];
 
 	bool collisionball1 = false;
 	bool collisionball2 = false;
@@ -176,6 +177,12 @@ int main ()
 	int framesSpeed = 12;
 
 	for (int i = 0; i < 7; i++){
+		enemiespossiblepossitions[i].x = 600.0 + (float)(i * 80);
+		enemiespossiblepossitions[i].y = 0.0 + (float)(i * 50);
+	}
+
+
+	for (int i = 0; i < 7; i++){
 		notelist[i].typenote = i+1;
 		notelist[i].rect.height = (float)notelist[i].sprite.height;
 		notelist[i].rect.width = (float)notelist[i].sprite.width/16;
@@ -190,8 +197,8 @@ int main ()
 		enemies[i].rect.height = (float)enemies[i].sprite.height;
 		enemies[i].rect.width = (float)enemies[i].sprite.width;
 		enemies[i].collision = false;
-		enemies[i].enemyx = GetRandomValue(600, 1050);
-		enemies[i].enemyy = GetRandomValue(20,370);
+		enemies[i].enemyx = enemiespossiblepossitions[i].x;
+		enemies[i].enemyy = enemiespossiblepossitions[i].y;
 	}
 
 

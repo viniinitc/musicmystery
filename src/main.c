@@ -56,8 +56,7 @@ void shootmove(notes* x){
 
 	for(int i = 0; i < 7; i++){
 		
-		int mov = x[i].direct;
-			
+		int mov = x[i].direct;	
 		if (mov == 1){
 
 			x[i].posnx += 80;
@@ -199,6 +198,8 @@ int main ()
 		enemies[i].collision = false;
 		enemies[i].enemyx = enemiespossiblepossitions[i].x;
 		enemies[i].enemyy = enemiespossiblepossitions[i].y;
+		enemies[i].vetor.x = (float)enemies[i].enemyx ;
+		enemies[i].vetor.y = (float)enemies[i].enemyy ;
 	}
 
 
@@ -224,9 +225,12 @@ int main ()
 		Vector2 contact4 = {(float)position4x, (float)position4y};
 		for (int i = 0; i < 7; i++){
 			for (int j = 0; j < 7; j++){
-				enemies[i].collision = CheckCollisionRecs(enemies[i].rect,notelist[j].rect);
+				notelist[j].vect.x = (float)notelist[j].posnx;
+				notelist[j].vect.y = (float)notelist[j].posny;
+				enemies[i].collision = CheckCollisionCircles(notelist[j].vect, 100.0f ,enemies[i].vetor,100.0f);
+			}	
 
-			}
+			
 		}
 		
 		collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
@@ -396,6 +400,7 @@ int main ()
 		for (int i = 0; i < 7; i++){
 			//if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); commenting this for now so i can figure collision out
 			DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
+			if (enemies[i].collision) DrawText("contact", 100, 100, 100, BLACK);
 		}
 		if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
 		if (collisionball2) DrawText("2", 100, 100, 100, BLACK);

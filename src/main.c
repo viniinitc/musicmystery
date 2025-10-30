@@ -198,8 +198,8 @@ int main ()
 		enemies[i].collision = false;
 		enemies[i].enemyx = enemiespossiblepossitions[i].x;
 		enemies[i].enemyy = enemiespossiblepossitions[i].y;
-		enemies[i].vetor.x = (float)enemies[i].enemyx ;
-		enemies[i].vetor.y = (float)enemies[i].enemyy ;
+		enemies[i].vetor.x = (float)enemies[i].enemyx + enemies[i].sprite.width/2;
+		enemies[i].vetor.y = (float)enemies[i].enemyy + enemies[i].sprite.height/2;
 	}
 
 
@@ -224,14 +224,14 @@ int main ()
 		Vector2 contact3 = {(float)position3x, (float)position3y};
 		Vector2 contact4 = {(float)position4x, (float)position4y};
 		for (int i = 0; i < 7; i++){
-			for (int j = 0; j < 7; j++){
-				notelist[j].vect.x = (float)notelist[j].posnx;
-				notelist[j].vect.y = (float)notelist[j].posny;
-				enemies[i].collision = CheckCollisionCircles(notelist[j].vect, 100.0f ,enemies[i].vetor,100.0f);
-			}	
 
-			
-		}
+			notelist[i].vect.x = (float)notelist[i].posnx + 32;
+			notelist[i].vect.y = (float)notelist[i].posny + 32;
+			enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f,enemies[i].vetor, 20.0f);
+			notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f, enemies[i].vetor,20.0f);
+	
+		}	
+		
 		
 		collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
 		collisionball2 = CheckCollisionPointCircle(GetMousePosition(),contact2, 20.0);
@@ -388,6 +388,7 @@ int main ()
 		if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
 		for (int i = 0; i < 7; i++){
 			if (notelist[i].turnr > 0) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
+			if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);
 		}
 		//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 
@@ -400,6 +401,7 @@ int main ()
 		for (int i = 0; i < 7; i++){
 			//if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); commenting this for now so i can figure collision out
 			DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
+			DrawCircle(enemies[i].enemyx + enemies[i].sprite.width/2,enemies[i].enemyy + enemies[i].sprite.height/2, 20.0f, BLACK);
 			if (enemies[i].collision) DrawText("contact", 100, 100, 100, BLACK);
 		}
 		if (collisionball1) DrawText("1", 100, 100, 100, BLACK);

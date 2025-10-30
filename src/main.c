@@ -91,6 +91,7 @@ typedef struct{
 	Vector2 vetor;
 	Rectangle rect;
 	bool collision;
+	bool dead;
 
 }enemytype;
 
@@ -190,12 +191,13 @@ int main ()
 		notelist[i].turnr = 0;
 		notelist[i].collision = false;
 		enemies[i].type = i+1;
-		enemies[i].hp = 2;
+		enemies[i].hp = 1;
 		enemies[i].rect.x = 0.0f;
 		enemies[i].rect.y = 0.0f;
 		enemies[i].rect.height = (float)enemies[i].sprite.height;
 		enemies[i].rect.width = (float)enemies[i].sprite.width;
 		enemies[i].collision = false;
+		enemies[i].dead = false;
 		enemies[i].enemyx = enemiespossiblepossitions[i].x;
 		enemies[i].enemyy = enemiespossiblepossitions[i].y;
 		enemies[i].vetor.x = (float)enemies[i].enemyx + enemies[i].sprite.width/2;
@@ -229,6 +231,7 @@ int main ()
 			notelist[i].vect.y = (float)notelist[i].posny + 32;
 			enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f,enemies[i].vetor, 20.0f);
 			notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f, enemies[i].vetor,20.0f);
+			if (enemies[i].collision) enemies[i].dead = true;
 	
 		}	
 		
@@ -388,7 +391,7 @@ int main ()
 		if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
 		for (int i = 0; i < 7; i++){
 			if (notelist[i].turnr > 0) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
-			if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);
+			//if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);
 		}
 		//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 
@@ -400,8 +403,8 @@ int main ()
 
 		for (int i = 0; i < 7; i++){
 			//if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); commenting this for now so i can figure collision out
-			DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
-			DrawCircle(enemies[i].enemyx + enemies[i].sprite.width/2,enemies[i].enemyy + enemies[i].sprite.height/2, 20.0f, BLACK);
+			if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); //collision is still a thing when the enemy stops being drawn, will correct that later
+			//DrawCircle(enemies[i].enemyx + enemies[i].sprite.width/2,enemies[i].enemyy + enemies[i].sprite.height/2, 20.0f, BLACK);
 			if (enemies[i].collision) DrawText("contact", 100, 100, 100, BLACK);
 		}
 		if (collisionball1) DrawText("1", 100, 100, 100, BLACK);

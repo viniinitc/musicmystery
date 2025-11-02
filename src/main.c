@@ -151,6 +151,7 @@ int main ()
 	enemies[4].sprite = LoadTexture("enemy5.png");
 	enemies[5].sprite = LoadTexture("enemy6.png");
 	enemies[6].sprite = LoadTexture("enemy7.png");
+	Texture2D explosion = LoadTexture("explosion.png");
 	Texture2D floortest1 = LoadTexture("floor1.png");
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
@@ -166,6 +167,7 @@ int main ()
 	Vector2 position = { 350.0f, 280.0f};
 	Vector2 positionplayer = { 30.0f, 337.0f};
 	Rectangle frameRec = {0.0f, 0.0f, (float)floortest1.width/16, (float)floortest1.height};
+	Rectangle explosionrec = {0.0f, 0.0f, (float)explosion.width/16, (float)explosion.height};
 	Rectangle frameRecplayer = {0.0f, 0.0f, (float)playersprite1.width/16, (float)playersprite1.height};
 	Rectangle frameRecplayer2 = {0.0f, 0.0f, (float)playersprite2.width/16, (float)playersprite2.height};
 	int soulposx = (int)positionplayer.x; 
@@ -232,8 +234,13 @@ int main ()
 			enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f,enemies[i].vetor, 20.0f);
 			notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f, enemies[i].vetor,20.0f);
 			if (enemies[i].collision) enemies[i].dead = true;
-	
+			if (enemies[i].dead) {
+				enemies[i].vetor.x = -100;
+				enemies[i].vetor.y = -100;
+			}
 		}	
+
+
 		
 		
 		collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
@@ -250,6 +257,7 @@ int main ()
 
             if (currentFrame > 15) currentFrame = 0;
 
+			explosionrec.x = (float)currentFrame*(float)explosion.width/16;
             frameRec.x = (float)currentFrame*(float)floortest1.width/16;
 			frameRecplayer.x = (float)currentFrame*(float)playersprite1.width/16;
 			frameRecplayer2.x = (float)currentFrame*(float)playersprite1.width/16;
@@ -403,7 +411,8 @@ int main ()
 
 		for (int i = 0; i < 7; i++){
 			//if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); commenting this for now so i can figure collision out
-			if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); //collision is still a thing when the enemy stops being drawn, will correct that later
+			if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);//collision is still a thing when the enemy stops being drawn, will correct that later
+			if (enemies[i].dead)DrawTextureRec(explosion, explosionrec, enemies[i].vetor, WHITE);
 			//DrawCircle(enemies[i].enemyx + enemies[i].sprite.width/2,enemies[i].enemyy + enemies[i].sprite.height/2, 20.0f, BLACK);
 			if (enemies[i].collision) DrawText("contact", 100, 100, 100, BLACK);
 		}
@@ -430,8 +439,12 @@ int main ()
 	// unload our texture so it can be cleaned up
 	for (int i = 0; i < 7; i++){
 		UnloadTexture(notelist[i].sprite);
+		UnloadTexture(enemies[i].sprite);
 	}
 
+
+	UnloadTexture(playersoul);
+	UnloadTexture(exitladder);
 	UnloadTexture(floortest1);
 	UnloadTexture(playersprite1);
 	UnloadTexture(playersprite2);

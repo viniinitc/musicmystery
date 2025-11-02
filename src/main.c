@@ -114,7 +114,10 @@ int main ()
 	int turncom;
 	int notecheck = 0;
 	int cont = 0;
+	int explosioncheck = 0;
+	int playerpoint = 0;
 	Vector2 enemiespossiblepossitions[7];
+	Vector2 explosionvect;
 
 	bool collisionball1 = false;
 	bool collisionball2 = false;
@@ -178,6 +181,10 @@ int main ()
 	int framesCounter = 0;
 	int framesSpeed = 12;
 
+	int currentExplosionFrame = 0;
+	int framesExplosionCounter = 0;
+
+
 	for (int i = 0; i < 7; i++){
 		enemiespossiblepossitions[i].x = 600.0 + (float)(i * 80);
 		enemiespossiblepossitions[i].y = 0.0 + (float)(i * 50);
@@ -235,10 +242,19 @@ int main ()
 			notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f, enemies[i].vetor,20.0f);
 			if (enemies[i].collision) enemies[i].dead = true;
 			if (enemies[i].dead) {
+				explosioncheck ++;
+				if (explosioncheck == 1){
+					explosionvect = enemies[i].vetor;
+					explosionvect.x -= 84;
+					explosionvect.y -= 94;
+				}
 				enemies[i].vetor.x = -100;
 				enemies[i].vetor.y = -100;
 			}
+
+			
 		}	
+
 
 
 		
@@ -254,18 +270,41 @@ int main ()
         {
             framesCounter = 0;
             currentFrame++;
+			
 
             if (currentFrame > 15) currentFrame = 0;
 
-			explosionrec.x = (float)currentFrame*(float)explosion.width/16;
+
             frameRec.x = (float)currentFrame*(float)floortest1.width/16;
 			frameRecplayer.x = (float)currentFrame*(float)playersprite1.width/16;
 			frameRecplayer2.x = (float)currentFrame*(float)playersprite1.width/16;
 			for (int i = 0; i < 7; i++){
 				notelist[i].rect.x = (float)currentFrame*(float)notelist[i].sprite.width/16;
 			}
-			
         }
+
+		
+		//use the same logic for note travel time
+
+
+		if (framesExplosionCounter >= (60/framesSpeed))
+        {
+            framesExplosionCounter = 0;
+
+            currentExplosionFrame++;
+
+            if (currentExplosionFrame > 15) {
+				currentExplosionFrame = 15;
+				playerpoint ++;
+
+			}
+
+			explosionrec.x = (float)currentExplosionFrame*(float)explosion.width/16;
+        }
+
+		if(enemies[0].dead)framesExplosionCounter++;
+
+
 		
 		//remember to update player movement 
 		if (TimerDone(&turntimer)){
@@ -412,7 +451,7 @@ int main ()
 		for (int i = 0; i < 7; i++){
 			//if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); commenting this for now so i can figure collision out
 			if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);//collision is still a thing when the enemy stops being drawn, will correct that later
-			if (enemies[i].dead)DrawTextureRec(explosion, explosionrec, enemies[i].vetor, WHITE);
+			if (enemies[i].dead)DrawTextureRec(explosion, explosionrec, explosionvect , WHITE);
 			//DrawCircle(enemies[i].enemyx + enemies[i].sprite.width/2,enemies[i].enemyy + enemies[i].sprite.height/2, 20.0f, BLACK);
 			if (enemies[i].collision) DrawText("contact", 100, 100, 100, BLACK);
 		}

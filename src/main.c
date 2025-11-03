@@ -254,6 +254,7 @@ int main ()
 			notelist[i].vect.y = (float)notelist[i].posny + 32;
 			enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f,enemies[i].vetor, 20.0f);
 			notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f, enemies[i].vetor,20.0f);
+			if (notelist[i].collision) notelist[i].turnr = 0;
 			if (enemies[i].collision) enemies[i].dead = true;
 			if (enemies[i].dead) {
 				enemies[i].explosioncheck++;
@@ -453,7 +454,7 @@ int main ()
 		if (dir == 2) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
 		if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
 		for (int i = 0; i < 7; i++){
-			if (notelist[i].turnr > 0) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
+			if (notelist[i].turnr > 0  && !notelist[i].collision) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
 			//if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);
 		}
 		//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
@@ -465,11 +466,11 @@ int main ()
 
 
 		for (int i = 0; i < 7; i++){
-			//if (!enemies[i].collision) DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE); commenting this for now so i can figure collision out
-			if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);//collision is still a thing when the enemy stops being drawn, will correct that later
+			
+			if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
 			if (enemies[i].dead)DrawTextureRec(explosion, enemies[i].explosionrect, enemies[i].explosionvect , WHITE);
-			//DrawCircle(enemies[i].enemyx + enemies[i].sprite.width/2,enemies[i].enemyy + enemies[i].sprite.height/2, 20.0f, BLACK);
-			if (enemies[i].collision) DrawText("contact", 100, 100, 100, BLACK);
+			
+			if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
 		}
 		if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
 		if (collisionball2) DrawText("2", 100, 100, 100, BLACK);

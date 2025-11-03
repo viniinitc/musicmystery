@@ -124,7 +124,7 @@ int main ()
 	int cont = 0;
 	int explosioncheck = 0;
 	int playerpoint = 0;
-	Vector2 enemiespossiblepossitions[7];
+	Vector2 enemiespossiblepossitions[15];
 
 	bool collisionball1 = false;
 	bool collisionball2 = false;
@@ -191,11 +191,25 @@ int main ()
 	int currentExplosionFrame = 0;
 	int framesExplosionCounter = 0;
 
+	
 
-	for (int i = 0; i < 7; i++){
-		enemiespossiblepossitions[i].x = 600.0 + (float)(i * 80);
-		enemiespossiblepossitions[i].y = 0.0 + (float)(i * 50);
+	int contpos = 0;
+
+	for (int j = 0; j < 2; j++){
+		for (int i = 0; i < 7; i++){
+			
+			enemiespossiblepossitions[contpos].x = 600.0 - (float)(j* 80) + (float)(i * 80);
+			enemiespossiblepossitions[contpos].y = 0.0 + (float)(j * 50) + (float)(i * 50);
+			contpos++;
+		}
 	}
+	enemiespossiblepossitions[contpos].x = 600.0 - 80.0 + (float)(7 * 80);
+	enemiespossiblepossitions[contpos].y = 0.0 + 50.0 + (float)(7 * 50);
+
+
+	int *seq = LoadRandomSequence((unsigned int) 7, 0, 15);
+	
+
 
 
 	for (int i = 0; i < 7; i++){
@@ -214,8 +228,8 @@ int main ()
 		enemies[i].rect.width = (float)enemies[i].sprite.width;
 		enemies[i].collision = false;
 		enemies[i].dead = false;
-		enemies[i].enemyx = enemiespossiblepossitions[i].x;
-		enemies[i].enemyy = enemiespossiblepossitions[i].y;
+		enemies[i].enemyx = enemiespossiblepossitions[seq[i]].x;
+		enemies[i].enemyy = enemiespossiblepossitions[seq[i]].y;
 		enemies[i].vetor.x = (float)enemies[i].enemyx + enemies[i].sprite.width/2;
 		enemies[i].vetor.y = (float)enemies[i].enemyy + enemies[i].sprite.height/2;
 		enemies[i].explosioncheck = 0;

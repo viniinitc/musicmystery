@@ -252,11 +252,19 @@ int main ()
 	int position4y;
 
 	
-
+	SetExitKey(KEY_NULL);
+	bool exitWindowRequested = false;
+	bool exitWindow = false;
 	// game loop
-	while (!WindowShouldClose())		// run the loop untill the user presses ESCAPE or presses the Close button on the window
+	while (!exitWindow)		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
 
+		if(WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindowRequested = true;
+
+		if (exitWindowRequested){
+			if (IsKeyPressed(KEY_Y)) exitWindow = true;
+			else if (IsKeyPressed(KEY_N)) exitWindowRequested = false;
+		}
 		
 		Vector2 contact1 = {(float)position1x, (float)position1y};
 		Vector2 contact2 = {(float)position2x, (float)position2y};
@@ -500,6 +508,13 @@ int main ()
 		DrawCircle(position4x ,position4y , 20, GRAY);
 		
 
+		
+		
+		if (exitWindowRequested){
+			DrawRectangle(0, 100, GetScreenWidth(), 200, BLACK);
+			DrawText("are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
+		}
+		
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();

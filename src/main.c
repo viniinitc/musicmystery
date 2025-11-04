@@ -5,6 +5,17 @@
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
 
+typedef enum GameScreen {
+
+	LOGO,
+	STARTSCREEN,
+	PAUSE,
+	CREDITS,
+	HIGHSCORE,
+	DEAD,
+	GAMEPLAY
+
+}GameScreen;
 
 
 typedef struct{
@@ -107,8 +118,15 @@ typedef struct{
 
 int main ()
 {
+
+	GameScreen currentScreen = LOGO;
+
+	int framecounter = 0;
+
 	notes notelist[7];
 	enemytype enemies[7];
+
+
 
 	int exitladderx = 1160;
 	int exitladdery = 180;
@@ -266,196 +284,250 @@ int main ()
 	while (!exitWindow)		// run the loop untill the user presses ESCAPE or presses the Close button on the window
 	{
 
-		if(WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindowRequested = true;
+		switch(currentScreen){
+			case LOGO:{
 
-		if (exitWindowRequested){
-			if (IsKeyPressed(KEY_Y)) exitWindow = true;
-			else if (IsKeyPressed(KEY_N)) exitWindowRequested = false;
-		}
-		
-		Vector2 contact1 = {(float)position1x, (float)position1y};
-		Vector2 contact2 = {(float)position2x, (float)position2y};
-		Vector2 contact3 = {(float)position3x, (float)position3y};
-		Vector2 contact4 = {(float)position4x, (float)position4y};
-		for (int i = 0; i < 7; i++){
+				framesCounter++;
 
-			notelist[i].vect.x = (float)notelist[i].posnx + 32;
-			notelist[i].vect.y = (float)notelist[i].posny + 32;
-			enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f,enemies[i].vetor, 20.0f);
-			notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f, enemies[i].vetor,20.0f);
-			if (notelist[i].collision) notelist[i].turnr = 0;
-			if (enemies[i].collision) enemies[i].dead = true;
-			if (enemies[i].dead) {
-				enemies[i].explosioncheck++;
-				if (enemies[i].explosioncheck == 1){
-					enemies[i].explosionvect = enemies[i].vetor;
-					enemies[i].explosionvect.x -= 84;
-					enemies[i].explosionvect.y -= 94;
+				if (framesCounter > 120){
+					currentScreen = STARTSCREEN;
 				}
-				enemies[i].vetor.x = -100;
-				enemies[i].vetor.y = -100;
-			}
 
+			}break;
+
+			case STARTSCREEN:{
+
+				if (IsKeyPressed(KEY_SPACE)) currentScreen = GAMEPLAY;
+
+
+			}break;
 			
-		}	
+			case GAMEPLAY:{
 
-
-
-		
-		
-		collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
-		collisionball2 = CheckCollisionPointCircle(GetMousePosition(),contact2, 20.0);
-		collisionball3 = CheckCollisionPointCircle(GetMousePosition(),contact3, 20.0);
-		collisionball4 = CheckCollisionPointCircle(GetMousePosition(),contact4, 20.0);
-		
-		framesCounter++;
-
-		if (framesCounter >= (60/framesSpeed))
-        {
-            framesCounter = 0;
-            currentFrame++;
-			
-
-            if (currentFrame > 15) currentFrame = 0;
-
-
-            frameRec.x = (float)currentFrame*(float)floortest1.width/16;
-			frameRecplayer.x = (float)currentFrame*(float)playersprite1.width/16;
-			frameRecplayer2.x = (float)currentFrame*(float)playersprite1.width/16;
-			for (int i = 0; i < 7; i++){
-				notelist[i].rect.x = (float)currentFrame*(float)notelist[i].sprite.width/16;
-			}
-        }
-
-		
-		//use the same logic for note travel time
-
-		for (int i = 0; i < 7; i++){
-			if (enemies[i].framesExplosionCounter >= (60/framesSpeed))
-			{
-			
-				enemies[i].framesExplosionCounter = 0;
-
-				enemies[i].currentExplosionFrame++;
-
-				if (enemies[i].currentExplosionFrame > 15) {
-					enemies[i].currentExplosionFrame = 15;
-					playerpoint ++;
+				if(WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) {
+					exitWindowRequested = true;
+					currentScreen = PAUSE;
 				}
 
-				enemies[i].explosionrect.x = (float)enemies[i].currentExplosionFrame*(float)explosion.width/16;
-			}
-			if(enemies[i].dead)enemies[i].framesExplosionCounter++;
-		}
 
-		
-
-
-		
-		//remember to update player movement 
-		if (TimerDone(&turntimer)){
-			if(IsKeyPressed(KEY_DOWN)) {
-				positionplayer.x += 80;
-				positionplayer.y += 50;
-				dir = 1;
-				turn++;
-				StartTimer(&turntimer,turnduration);
-				turncom = turn;
-				StartTimer(&notetimer, notetimerduration);
-				shootmove(notelist);
-			}
-			if(IsKeyPressed(KEY_UP)) {
-				positionplayer.x -= 80;
-				positionplayer.y -= 50;
-				dir = 4;
-				turn++;
-				StartTimer(&turntimer,turnduration);
-				turncom = turn;
-				shootmove(notelist);
-			}
-			if(IsKeyPressed(KEY_RIGHT)) {
-				positionplayer.x += 80;
-				positionplayer.y -= 50;
-				dir = 2;
-				turn++;
-				StartTimer(&turntimer,turnduration);
-				turncom = turn;
-				shootmove(notelist);
-			}
-			if(IsKeyPressed(KEY_LEFT)) {
-				positionplayer.x -= 80;
-				positionplayer.y += 50;
-				dir = 3;
-				turn++;
-				StartTimer(&turntimer,turnduration);
-				turncom = turn;
-				shootmove(notelist);
-			}
-			
-			if(IsKeyPressed(KEY_SPACE) && turn != 0){
-				turn++;
-				
-				
-				
-				notelist[notecheck].direct = dir;
-				notelist[notecheck].posnx = positionplayer.x;
-				notelist[notecheck].posny = positionplayer.y;
-				if(dir == 1) {
-					notelist[notecheck].posny += 70;
-					notelist[notecheck].posnx += 30;
-				}
-				if(dir == 2) {
-					notelist[notecheck].posny += 70;
-					notelist[notecheck].posnx += 35;
-				}
-				if(dir == 3) {
-					notelist[notecheck].posny += 70;
-					notelist[notecheck].posnx += 30;
-				}
-				if(dir == 4) {
-					notelist[notecheck].posny += 80;
-					notelist[notecheck].posnx += 30;
-				}
-				notelist[notecheck].turnr = turn;
+	
 				
 
-				StartTimer(&turntimer,turnduration);
-				shootmove(notelist); 
-				turncom = turn;
 
-			}
-		}
-		if(IsKeyPressed(KEY_ONE)) {
-				notecheck++;
-				if (notecheck > 6) notecheck = 0;
-		}
 
-		if (IsKeyPressed(KEY_CAPS_LOCK)) {
-			
-			//movement balls
+				Vector2 contact1 = {(float)position1x, (float)position1y};
+				Vector2 contact2 = {(float)position2x, (float)position2y};
+				Vector2 contact3 = {(float)position3x, (float)position3y};
+				Vector2 contact4 = {(float)position4x, (float)position4y};
+				for (int i = 0; i < 7; i++){
 
-			position1x = (int)positionplayer.x + 154;
-			position1y = (int)positionplayer.y + 65; 
+					notelist[i].vect.x = (float)notelist[i].posnx + 32;
+					notelist[i].vect.y = (float)notelist[i].posny + 32;
+					enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f,enemies[i].vetor, 20.0f);
+					notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f, enemies[i].vetor,20.0f);
+					if (notelist[i].collision) notelist[i].turnr = 0;
+					if (enemies[i].collision) enemies[i].dead = true;
+					if (enemies[i].dead) {
+						enemies[i].explosioncheck++;
+						if (enemies[i].explosioncheck == 1){
+							enemies[i].explosionvect = enemies[i].vetor;
+							enemies[i].explosionvect.x -= 84;
+							enemies[i].explosionvect.y -= 94;
+						}
+						enemies[i].vetor.x = -100;
+						enemies[i].vetor.y = -100;
+					}
 
-			position2x = (int)positionplayer.x;
-			position2y = (int)positionplayer.y + 45; 
+					
+				}	
 
-			position3x = (int)positionplayer.x + 144;
-			position3y = (int)positionplayer.y + 170; 
 
-			position4x = (int)positionplayer.x;
-			position4y = (int)positionplayer.y + 160; 
-			
 
-			
+				
+				
+				collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
+				collisionball2 = CheckCollisionPointCircle(GetMousePosition(),contact2, 20.0);
+				collisionball3 = CheckCollisionPointCircle(GetMousePosition(),contact3, 20.0);
+				collisionball4 = CheckCollisionPointCircle(GetMousePosition(),contact4, 20.0);
+				
+				framesCounter++;
+
+				if (framesCounter >= (60/framesSpeed))
+				{
+					framesCounter = 0;
+					currentFrame++;
+					
+
+					if (currentFrame > 15) currentFrame = 0;
+
+
+					frameRec.x = (float)currentFrame*(float)floortest1.width/16;
+					frameRecplayer.x = (float)currentFrame*(float)playersprite1.width/16;
+					frameRecplayer2.x = (float)currentFrame*(float)playersprite1.width/16;
+					for (int i = 0; i < 7; i++){
+						notelist[i].rect.x = (float)currentFrame*(float)notelist[i].sprite.width/16;
+					}
+				}
+
+				
+				//use the same logic for note travel time
+
+				for (int i = 0; i < 7; i++){
+					if (enemies[i].framesExplosionCounter >= (60/framesSpeed))
+					{
+					
+						enemies[i].framesExplosionCounter = 0;
+
+						enemies[i].currentExplosionFrame++;
+
+						if (enemies[i].currentExplosionFrame > 15) {
+							enemies[i].currentExplosionFrame = 15;
+							playerpoint ++;
+						}
+
+						enemies[i].explosionrect.x = (float)enemies[i].currentExplosionFrame*(float)explosion.width/16;
+					}
+					if(enemies[i].dead)enemies[i].framesExplosionCounter++;
+				}
+
+				
+
+
+				
+				//remember to update player movement 
+				if (TimerDone(&turntimer)){
+					if(IsKeyPressed(KEY_DOWN)) {
+						positionplayer.x += 80;
+						positionplayer.y += 50;
+						dir = 1;
+						turn++;
+						StartTimer(&turntimer,turnduration);
+						turncom = turn;
+						StartTimer(&notetimer, notetimerduration);
+						shootmove(notelist);
+					}
+					if(IsKeyPressed(KEY_UP)) {
+						positionplayer.x -= 80;
+						positionplayer.y -= 50;
+						dir = 4;
+						turn++;
+						StartTimer(&turntimer,turnduration);
+						turncom = turn;
+						shootmove(notelist);
+					}
+					if(IsKeyPressed(KEY_RIGHT)) {
+						positionplayer.x += 80;
+						positionplayer.y -= 50;
+						dir = 2;
+						turn++;
+						StartTimer(&turntimer,turnduration);
+						turncom = turn;
+						shootmove(notelist);
+					}
+					if(IsKeyPressed(KEY_LEFT)) {
+						positionplayer.x -= 80;
+						positionplayer.y += 50;
+						dir = 3;
+						turn++;
+						StartTimer(&turntimer,turnduration);
+						turncom = turn;
+						shootmove(notelist);
+					}
+					
+					if(IsKeyPressed(KEY_SPACE) && turn != 0){
+						turn++;
+						
+						
+						
+						notelist[notecheck].direct = dir;
+						notelist[notecheck].posnx = positionplayer.x;
+						notelist[notecheck].posny = positionplayer.y;
+						if(dir == 1) {
+							notelist[notecheck].posny += 70;
+							notelist[notecheck].posnx += 30;
+						}
+						if(dir == 2) {
+							notelist[notecheck].posny += 70;
+							notelist[notecheck].posnx += 35;
+						}
+						if(dir == 3) {
+							notelist[notecheck].posny += 70;
+							notelist[notecheck].posnx += 30;
+						}
+						if(dir == 4) {
+							notelist[notecheck].posny += 80;
+							notelist[notecheck].posnx += 30;
+						}
+						notelist[notecheck].turnr = turn;
+						
+
+						StartTimer(&turntimer,turnduration);
+						shootmove(notelist); 
+						turncom = turn;
+
+					}
+				}
+				if(IsKeyPressed(KEY_ONE)) {
+						notecheck++;
+						if (notecheck > 6) notecheck = 0;
+				}
+
+				if (IsKeyPressed(KEY_CAPS_LOCK)) {
+					
+					//movement balls
+
+					position1x = (int)positionplayer.x + 154;
+					position1y = (int)positionplayer.y + 65; 
+
+					position2x = (int)positionplayer.x;
+					position2y = (int)positionplayer.y + 45; 
+
+					position3x = (int)positionplayer.x + 144;
+					position3y = (int)positionplayer.y + 170; 
+
+					position4x = (int)positionplayer.x;
+					position4y = (int)positionplayer.y + 160; 
+					
+
+					
+				}
+				
+
+
+				UpdateTimer(&turntimer);
+
+				int pcolx = posx+32; 
+				int pcoly = posy+64;
+
+			}break;
+
+			case PAUSE:{
+
+				if (IsKeyPressed(KEY_Y)) exitWindow = true;
+				else if (IsKeyPressed(KEY_N)) {
+					exitWindowRequested = false;
+					currentScreen = GAMEPLAY;
+				}
+
+
+			}break;
+
+			case DEAD:{
+
+			}break;
+
+			case CREDITS:{
+
+			}break;
+
+			case HIGHSCORE:{
+
+			}break;
+			default: break;
 		}
 		
-
-
-		UpdateTimer(&turntimer);
-
-		int pcolx = posx+32; 
-		int pcoly = posy+64;
+		
+		
 		// drawing
 		BeginDrawing();
 

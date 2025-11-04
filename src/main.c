@@ -3,7 +3,7 @@
 #include "stdlib.h"
 #include "raymath.h"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
-
+#include "buttons.h"
 
 typedef enum GameScreen {
 
@@ -258,10 +258,12 @@ int main ()
 	}
 
 
-	Rectangle buttonbound = {screenwidth/2.0f - storybutton.width/3/2.0f, screenheight/2.0f - storybutton.height/2.0f, (float)storybutton.width/3, (float)storybutton.height};
-	Rectangle buttonsource = {0, 0, (float)storybutton.width/3, (float)storybutton.height};
-	int buttonstate = 0;
-	bool buttonactive = false;
+	Rectangle buttonstorybound = {screenwidth/2.0f - storybutton.width/3/2.0f, screenheight/2.0f - storybutton.height/2.0f, (float)storybutton.width/3, (float)storybutton.height};
+	Rectangle buttonstorysource = {0, 0, (float)storybutton.width/3, (float)storybutton.height};
+	int buttonstorystate = 0;
+	bool buttonstoryactive = false;
+
+
 
 	int soulposx = (int)positionplayer.x; 
 	int soulposy = (int)positionplayer.y;
@@ -359,18 +361,21 @@ int main ()
 
 				mousebutn = GetMousePosition();
 				
-				buttonactive = false;
+				buttonstoryactive = false;
 
-				if (CheckCollisionPointRec(mousebutn, buttonbound)) {
-					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonstate = 2;
-					else buttonstate = 1;
+				//buttonswork(mousebutn, buttonbound, buttonstate, buttonactive, buttonsource, storybutton, currentScreen);
+				if (CheckCollisionPointRec(mousebutn, buttonstorybound)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonstorystate = 2;
+					else buttonstorystate = 1;
 
-					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonactive = true;
-				} else buttonstate = 0;
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonstoryactive = true;
+				} else buttonstorystate = 0;
 
-				buttonsource.x = (float)(buttonstate*(storybutton.width/3));
+				buttonstorysource.x = (float)(buttonstorystate*(storybutton.width/3));
 
-				if (buttonactive) currentScreen = GAMEPLAY;
+				if (buttonstoryactive) currentScreen = GAMEPLAY;
+
+				
 
 
 			}break;
@@ -623,7 +628,7 @@ int main ()
                 DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
                 DrawText("PRESS SPACEo to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
 
-				DrawTextureRec(storybutton, buttonsource, (Vector2){ buttonbound.x, buttonbound.y }, WHITE);
+				DrawTextureRec(storybutton, buttonstorysource, (Vector2){ buttonstorybound.x, buttonstorybound.y }, WHITE);
 
 			}break;
 

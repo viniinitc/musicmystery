@@ -34,10 +34,10 @@ typedef enum buttontype {
 typedef struct{
 	
 	Texture2D sprite;
-	Rectangle buttonrec;
+	Rectangle buttonbound;
 	int state;
 	bool activation;
-
+	Rectangle source;
 
 }buttons;
 
@@ -179,7 +179,9 @@ int main ()
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
 	// Create the window and OpenGL context
-	InitWindow(1280, 900, "MusicMystery");
+	int screenwidth = 1280;
+	int screenheight = 900;
+	InitWindow(screenwidth, screenheight, "MusicMystery");
 	SetTargetFPS(60);
 
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
@@ -244,15 +246,19 @@ int main ()
 
 	for (int i = 0; i < 6;i++){
 		button[i].activation = false;
-		button[i].buttonrec.width = GetScreenWidth()/2.0f - button[i].sprite.width/3/2.0f;
-		button[i].buttonrec.height = GetScreenHeight()/2.0f - button[i].sprite.height/2.0f;
-		button[i].buttonrec.x = (float)button[i].sprite.width/3;
-		button[i].buttonrec.y = (float)button[i].sprite.height;
+		button[i].buttonbound.width = screenwidth/2.0f - button[i].sprite.width/3/2.0f;
+		button[i].buttonbound.height = screenheight/2.0f - button[i].sprite.height/2.0f;
+		button[i].buttonbound.x = (float)button[i].sprite.width/3;
+		button[i].buttonbound.y = (float)button[i].sprite.height;
+		button[i].source.width = 0;
+		button[i].source.height = 0;
+		button[i].source.x = (float)button[i].sprite.width/3;
+		button[i].source.y = (float)button[i].sprite.height;
 		button[i].state = 0;
 	}
 
 
-	Rectangle buttonrec = {GetScreenWidth()/2.0f - storybutton.width/3/2.0f, GetScreenHeight()/2.0f - storybutton.height/2.0f, (float)storybutton.width/3, (float)storybutton.height};
+	Rectangle buttonbound = {screenwidth/2.0f - storybutton.width/3/2.0f, screenheight/2.0f - storybutton.height/2.0f, (float)storybutton.width/3, (float)storybutton.height};
 	Rectangle buttonsource = {0, 0, (float)storybutton.width/3, (float)storybutton.height};
 	int buttonstate = 0;
 	bool buttonactive = false;
@@ -352,19 +358,19 @@ int main ()
 			case STARTSCREEN:{
 
 				mousebutn = GetMousePosition();
-				button[STORY].activation = false;
+				
 				buttonactive = false;
 
-				if (CheckCollisionPointRec(mousebutn, button[STORY].buttonrec)) {
-					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) button[STORY].state = 2;
-					else button[STORY].state = 1;
+				if (CheckCollisionPointRec(mousebutn, buttonbound)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonstate = 2;
+					else buttonstate = 1;
 
-					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) button[STORY].activation = true;
-				} else button[STORY].state = 0;
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonactive = true;
+				} else buttonstate = 0;
 
-				buttonsource.x = (float)(button[STORY].state*(button[STORY].sprite.width/3));
+				buttonsource.x = (float)(buttonstate*(storybutton.width/3));
 
-				if (button[STORY].activation) currentScreen = GAMEPLAY;
+				if (buttonactive) currentScreen = GAMEPLAY;
 
 
 			}break;
@@ -608,16 +614,16 @@ int main ()
 		switch(currentScreen){
 			case LOGO:{
 				DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
-				DrawTexture(mylogo, (GetScreenWidth()/2)-(mylogo.width/2), (GetScreenHeight()/2)-(mylogo.height/2), WHITE);
+				DrawTexture(mylogo, (screenwidth/2)-(mylogo.width/2), (screenheight/2)-(mylogo.height/2), WHITE);
                 DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
 			}break;
 
 			case STARTSCREEN:{
-				DrawRectangle(0, 0,	GetScreenWidth(), GetScreenHeight(), GREEN);
+				DrawRectangle(0, 0,	screenwidth, screenheight, GREEN);
                 DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
                 DrawText("PRESS SPACEo to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
 
-				DrawTextureRec(storybutton, buttonsource, (Vector2){ buttonrec.x, buttonrec.y }, WHITE);
+				DrawTextureRec(storybutton, buttonsource, (Vector2){ buttonbound.x, buttonbound.y }, WHITE);
 
 			}break;
 
@@ -680,7 +686,7 @@ int main ()
 			}break;
 
 			case PAUSE:{
-				DrawRectangle(0, 100, GetScreenWidth(), 200, BLACK);
+				DrawRectangle(0, 100, screenwidth, 200, BLACK);
 				DrawText("are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
 			}break;
 

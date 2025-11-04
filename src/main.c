@@ -17,6 +17,29 @@ typedef enum GameScreen {
 
 }GameScreen;
 
+typedef enum buttontype {
+
+	STORY = 0,
+	ENDLESS,
+	CONTINUE,
+	EXIT,
+	RESTART,
+	MENU
+
+}buttontype;
+
+
+
+
+typedef struct{
+	
+	Texture2D sprite;
+	Rectangle buttonrec;
+	int state;
+	bool activation;
+
+
+}buttons;
 
 typedef struct{
 
@@ -121,11 +144,14 @@ int main ()
 
 	GameScreen currentScreen = LOGO;
 
+	buttontype currentbutton;
+
+
 	int framecounter = 0;
 
 	notes notelist[7];
 	enemytype enemies[7];
-
+	buttons button[6];
 
 
 	int exitladderx = 1160;
@@ -186,6 +212,12 @@ int main ()
 	enemies[4].sprite = LoadTexture("enemy5.png");
 	enemies[5].sprite = LoadTexture("enemy6.png");
 	enemies[6].sprite = LoadTexture("enemy7.png");
+	button[STORY].sprite = LoadTexture("buttonstory.png");
+	button[ENDLESS].sprite = LoadTexture("buttonendless.png");
+	button[CONTINUE].sprite = LoadTexture("buttoncontinue.png");
+	button[EXIT].sprite = LoadTexture("buttonexit.png");
+	button[RESTART].sprite = LoadTexture("buttonrestart.png");
+	button[MENU].sprite = LoadTexture("buttonmenu.png");
 	Texture2D explosion = LoadTexture("explosion.png");
 	Texture2D floortest1 = LoadTexture("floor1.png");
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
@@ -209,10 +241,19 @@ int main ()
 	Rectangle frameRecplayer = {0.0f, 0.0f, (float)playersprite1.width/16, (float)playersprite1.height};
 	Rectangle frameRecplayer2 = {0.0f, 0.0f, (float)playersprite2.width/16, (float)playersprite2.height};
 
+
+	for (int i = 0; i < 6;i++){
+		button[i].activation = false;
+		button[i].buttonrec.width = GetScreenWidth()/2.0f - button[i].sprite.width/3/2.0f;
+		button[i].buttonrec.height = GetScreenHeight()/2.0f - button[i].sprite.height/2.0f;
+		button[i].buttonrec.x = (float)button[i].sprite.width/3;
+		button[i].buttonrec.y = (float)button[i].sprite.height;
+		button[i].state = 0;
+	}
+
+
 	Rectangle buttonrec = {GetScreenWidth()/2.0f - storybutton.width/3/2.0f, GetScreenHeight()/2.0f - storybutton.height/2.0f, (float)storybutton.width/3, (float)storybutton.height};
 	Rectangle buttonsource = {0, 0, (float)storybutton.width/3, (float)storybutton.height};
-
-
 	int buttonstate = 0;
 	bool buttonactive = false;
 
@@ -311,19 +352,19 @@ int main ()
 			case STARTSCREEN:{
 
 				mousebutn = GetMousePosition();
+				button[STORY].activation = false;
 				buttonactive = false;
 
-				if (CheckCollisionPointRec(mousebutn, buttonrec)) {
-					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonstate = 2;
-					else buttonstate = 1;
+				if (CheckCollisionPointRec(mousebutn, button[STORY].buttonrec)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) button[STORY].state = 2;
+					else button[STORY].state = 1;
 
-					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonactive = true;
-				} else buttonstate = 0;
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) button[STORY].activation = true;
+				} else button[STORY].state = 0;
 
-				buttonsource.x = (float)(buttonstate*(storybutton.width/3));
+				buttonsource.x = (float)(button[STORY].state*(button[STORY].sprite.width/3));
 
-				
-				if (buttonactive) currentScreen = GAMEPLAY;
+				if (button[STORY].activation) currentScreen = GAMEPLAY;
 
 
 			}break;

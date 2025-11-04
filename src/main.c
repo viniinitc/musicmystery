@@ -31,15 +31,7 @@ typedef enum buttontype {
 
 
 
-typedef struct{
-	
-	Texture2D sprite;
-	Rectangle buttonbound;
-	int state;
-	bool activation;
-	Rectangle source;
 
-}buttons;
 
 typedef struct{
 
@@ -151,9 +143,8 @@ int main ()
 
 	notes notelist[7];
 	enemytype enemies[7];
-	buttons button[6];
 
-
+	int restart = 0;
 	int exitladderx = 1160;
 	int exitladdery = 180;
 	int posx=64;
@@ -193,6 +184,8 @@ int main ()
 	Texture playersprite4 = LoadTexture("playersprite4.png");
 	Texture exitladder = LoadTexture("ladder.png");
 	Texture playersoul = LoadTexture("playersoul.png");
+
+
 	notenoan[0] = LoadTexture("donoan.png");
 	notenoan[1] = LoadTexture("renoan.png");
 	notenoan[2] = LoadTexture("minoan.png");
@@ -200,6 +193,8 @@ int main ()
 	notenoan[4] = LoadTexture("solnoan.png");
 	notenoan[5] = LoadTexture("lanoan.png");
 	notenoan[6] = LoadTexture("sinoan.png");
+
+
 	notelist[0].sprite = LoadTexture("do.png");
 	notelist[1].sprite = LoadTexture("re.png");
 	notelist[2].sprite = LoadTexture("mi.png");
@@ -207,6 +202,8 @@ int main ()
 	notelist[4].sprite = LoadTexture("sol.png");
 	notelist[5].sprite = LoadTexture("la.png");
 	notelist[6].sprite = LoadTexture("si.png");
+
+
 	enemies[0].sprite = LoadTexture("enemy1.png");
 	enemies[1].sprite = LoadTexture("enemy2.png");
 	enemies[2].sprite = LoadTexture("enemy3.png");
@@ -214,19 +211,23 @@ int main ()
 	enemies[4].sprite = LoadTexture("enemy5.png");
 	enemies[5].sprite = LoadTexture("enemy6.png");
 	enemies[6].sprite = LoadTexture("enemy7.png");
-	button[STORY].sprite = LoadTexture("buttonstory.png");
-	button[ENDLESS].sprite = LoadTexture("buttonendless.png");
-	button[CONTINUE].sprite = LoadTexture("buttoncontinue.png");
-	button[EXIT].sprite = LoadTexture("buttonexit.png");
-	button[RESTART].sprite = LoadTexture("buttonrestart.png");
-	button[MENU].sprite = LoadTexture("buttonmenu.png");
+
+
 	Texture2D explosion = LoadTexture("explosion.png");
 	Texture2D floortest1 = LoadTexture("floor1.png");
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
 	Texture mylogo = LoadTexture("logo.png");
+
+
 	Texture2D storybutton = LoadTexture("buttonstory.png");
-	
+	Texture2D endlessbutton = LoadTexture("buttonendless.png");
+	Texture2D continuebutton = LoadTexture("buttoncontinue.png");
+	Texture2D exitbutton = LoadTexture("buttonexit.png");
+	Texture2D restartbutton = LoadTexture("buttonrestart.png");
+	Texture2D menubutton = LoadTexture("buttonmenu.png");
+	Texture2D creditsbutton = LoadTexture("buttoncredits.png");
+
 	Timer turntimer = {0};
 	Timer notetimer = {0};
 
@@ -244,24 +245,44 @@ int main ()
 	Rectangle frameRecplayer2 = {0.0f, 0.0f, (float)playersprite2.width/16, (float)playersprite2.height};
 
 
-	for (int i = 0; i < 6;i++){
-		button[i].activation = false;
-		button[i].buttonbound.width = screenwidth/2.0f - button[i].sprite.width/3/2.0f;
-		button[i].buttonbound.height = screenheight/2.0f - button[i].sprite.height/2.0f;
-		button[i].buttonbound.x = (float)button[i].sprite.width/3;
-		button[i].buttonbound.y = (float)button[i].sprite.height;
-		button[i].source.width = 0;
-		button[i].source.height = 0;
-		button[i].source.x = (float)button[i].sprite.width/3;
-		button[i].source.y = (float)button[i].sprite.height;
-		button[i].state = 0;
-	}
-
+	//buttons--------------------------------------------------------------------------------
 
 	Rectangle buttonstorybound = {screenwidth/2.0f - storybutton.width/3/2.0f, screenheight/2.0f - storybutton.height/2.0f, (float)storybutton.width/3, (float)storybutton.height};
 	Rectangle buttonstorysource = {0, 0, (float)storybutton.width/3, (float)storybutton.height};
 	int buttonstorystate = 0;
 	bool buttonstoryactive = false;
+
+	Rectangle buttonendlessbound = {screenwidth/2.0f - endlessbutton.width/3/2.0f, screenheight/2.0f - endlessbutton.height/2.0f + (endlessbutton.height+20), (float)endlessbutton.width/3, (float)endlessbutton.height};
+	Rectangle buttonendlesssource = {0, 0, (float)endlessbutton.width/3, (float)endlessbutton.height};
+	int buttonendlessstate = 0;
+	bool buttonendlessactive = false;
+
+	Rectangle buttoncontinuebound = {screenwidth/2.0f - continuebutton.width/3/2.0f - ((continuebutton.width/3)+20), screenheight/2.0f - continuebutton.height/2.0f, (float)continuebutton.width/3, (float)continuebutton.height};
+	Rectangle buttoncontinuesource = {0, 0, (float)continuebutton.width/3, (float)continuebutton.height};
+	int buttoncontinuestate = 0;
+	bool buttoncontinueactive = false;
+
+	Rectangle buttonexitbound = {screenwidth/2.0f - exitbutton.width/3/2.0f , screenheight/2.0f - exitbutton.height/2.0f + ((exitbutton.height+20)*3), (float)exitbutton.width/3, (float)exitbutton.height};
+	Rectangle buttonexitsource = {0, 0, (float)exitbutton.width/3, (float)exitbutton.height};
+	int buttonexitstate = 0;
+	bool buttonexitactive = false;
+
+	Rectangle buttonrestartbound = {screenwidth/2.0f - restartbutton.width/3/2.0f , screenheight/2.0f - restartbutton.height/2.0f, (float)restartbutton.width/3, (float)restartbutton.height};
+	Rectangle buttonrestartsource = {0, 0, (float)restartbutton.width/3, (float)restartbutton.height};
+	int buttonrestartstate = 0;
+	bool buttonrestartactive = false;
+
+	Rectangle buttonmenubound = {screenwidth/2.0f - menubutton.width/3/2.0f + ((menubutton.width/3)+20), screenheight/2.0f - menubutton.height/2.0f, (float)menubutton.width/3, (float)menubutton.height};
+	Rectangle buttonmenusource = {0, 0, (float)menubutton.width/3, (float)menubutton.height};
+	int buttonmenustate = 0;
+	bool buttonmenuactive = false;
+
+	Rectangle buttoncreditsbound = {screenwidth/2.0f - creditsbutton.width/3/2.0f, screenheight/2.0f - creditsbutton.height/2.0f + ((creditsbutton.height+20)*2), (float)creditsbutton.width/3, (float)creditsbutton.height};
+	Rectangle buttoncreditssource = {0, 0, (float)creditsbutton.width/3, (float)creditsbutton.height};
+	int buttoncreditsstate = 0;
+	bool buttoncreditsactive = false;
+
+	//buttons---------------------------------
 
 
 
@@ -362,8 +383,10 @@ int main ()
 				mousebutn = GetMousePosition();
 				
 				buttonstoryactive = false;
+				buttonendlessactive = false;
+				buttoncreditsactive = false;
+				buttonexitactive = false;
 
-				//buttonswork(mousebutn, buttonbound, buttonstate, buttonactive, buttonsource, storybutton, currentScreen);
 				if (CheckCollisionPointRec(mousebutn, buttonstorybound)) {
 					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonstorystate = 2;
 					else buttonstorystate = 1;
@@ -375,6 +398,45 @@ int main ()
 
 				if (buttonstoryactive) currentScreen = GAMEPLAY;
 
+
+
+				if (CheckCollisionPointRec(mousebutn, buttonendlessbound)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonendlessstate = 2;
+					else buttonendlessstate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonendlessactive = true;
+				} else buttonendlessstate = 0;
+
+				buttonendlesssource.x = (float)(buttonendlessstate*(endlessbutton.width/3));
+
+				if (buttonendlessactive) currentScreen = GAMEPLAY;
+
+
+
+				if (CheckCollisionPointRec(mousebutn, buttoncreditsbound)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttoncreditsstate = 2;
+					else buttoncreditsstate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttoncreditsactive = true;
+				} else buttoncreditsstate = 0;
+
+				buttoncreditssource.x = (float)(buttoncreditsstate*(creditsbutton.width/3));
+
+				if (buttoncreditsactive) currentScreen = CREDITS;
+
+
+
+
+				if (CheckCollisionPointRec(mousebutn, buttonexitbound)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonexitstate = 2;
+					else buttonexitstate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonexitactive = true;
+				} else buttonexitstate = 0;
+
+				buttonexitsource.x = (float)(buttonexitstate*(exitbutton.width/3));
+
+				if (buttonexitactive)exitWindow = true;
 				
 
 
@@ -581,11 +643,50 @@ int main ()
 
 			case PAUSE:{
 
-				if (IsKeyPressed(KEY_Y)) exitWindow = true;
-				else if (IsKeyPressed(KEY_N)) {
-					exitWindowRequested = false;
-					currentScreen = GAMEPLAY;
+				mousebutn = GetMousePosition();
+
+				buttonmenuactive = false;
+				buttoncontinueactive = false;
+				buttonexitactive = false;
+
+				if (CheckCollisionPointRec(mousebutn, buttoncontinuebound)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttoncontinuestate = 2;
+					else buttoncontinuestate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttoncontinueactive = true;
+				} else buttoncontinuestate = 0;
+
+				buttoncontinuesource.x = (float)(buttoncontinuestate*(continuebutton.width/3));
+
+				if (buttoncontinueactive) currentScreen = GAMEPLAY;
+
+
+
+				if (CheckCollisionPointRec(mousebutn, buttonexitbound)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonexitstate = 2;
+					else buttonexitstate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonexitactive = true;
+				} else buttonexitstate = 0;
+
+				buttonexitsource.x = (float)(buttonexitstate*(exitbutton.width/3));
+
+				if (buttonexitactive)exitWindow = true;
+
+				if (CheckCollisionPointRec(mousebutn, buttonmenubound)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonmenustate = 2;
+					else buttonmenustate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonmenuactive = true;
+				} else buttonmenustate = 0;
+
+				buttonmenusource.x = (float)(buttonmenustate*(menubutton.width/3));
+
+				if (buttonmenuactive) {
+					currentScreen = STARTSCREEN;
+					restart = 1;
 				}
+
 
 
 			}break;
@@ -629,6 +730,12 @@ int main ()
                 DrawText("PRESS SPACEo to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
 
 				DrawTextureRec(storybutton, buttonstorysource, (Vector2){ buttonstorybound.x, buttonstorybound.y }, WHITE);
+
+				DrawTextureRec(endlessbutton, buttonendlesssource, (Vector2){ buttonendlessbound.x, buttonendlessbound.y}, WHITE);
+
+				DrawTextureRec(creditsbutton, buttoncreditssource, (Vector2){ buttoncreditsbound.x, buttoncreditsbound.y}, WHITE);
+
+				DrawTextureRec(exitbutton, buttonexitsource, (Vector2){ buttonexitbound.x, buttonexitbound.y}, WHITE);
 
 			}break;
 
@@ -693,6 +800,13 @@ int main ()
 			case PAUSE:{
 				DrawRectangle(0, 100, screenwidth, 200, BLACK);
 				DrawText("are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
+
+				DrawTextureRec(continuebutton, buttoncontinuesource, (Vector2){ buttoncontinuebound.x, buttoncontinuebound.y}, WHITE);
+
+				DrawTextureRec(menubutton, buttonmenusource, (Vector2){ buttonmenubound.x, buttonmenubound.y}, WHITE);
+
+				DrawTextureRec(exitbutton, buttonexitsource, (Vector2){ buttonexitbound.x, buttonexitbound.y}, WHITE);
+
 			}break;
 
 			case CREDITS:{

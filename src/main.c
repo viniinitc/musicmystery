@@ -232,7 +232,7 @@ int main ()
 	enemiespossiblepossitions[contpos].y = 0.0 + 50.0 + (float)(7 * 50);
 
 
-	int *seq = LoadRandomSequence((unsigned int) 7, 0, 15);
+	int *seq = LoadRandomSequence((unsigned int) 7, 0, 14);
 	
 
 
@@ -538,67 +538,96 @@ int main ()
 		DrawText("Hello Raylib ", 200,200,20,WHITE);
 
 		// draw our texture to the screen
-		
+		switch(currentScreen){
+			case LOGO:{
+				DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
+                DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
+			}break;
 
-		
-		//create if statements so things only get drawn when i need them
-		for (int i = 0; i < 7; i++){
-			notelist[i].vect.x = notelist[i].posnx;
-			notelist[i].vect.y = notelist[i].posny;
-		}
-		
-		DrawTexture(floortest1, 20, 40, WHITE);
-		DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
-		DrawTexture(playersoul, soulposx, soulposy, WHITE);
-		if (dir == 1) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
-		if (dir == 3) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
-		if (dir == 2) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
-		if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
-		for (int i = 0; i < 7; i++){
-			if (notelist[i].turnr > 0  && !notelist[i].collision) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
-			//if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);
-		}
-		//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
+			case STARTSCREEN:{
+				DrawRectangle(0, 0,	GetScreenWidth(), GetScreenHeight(), GREEN);
+                DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
+                DrawText("PRESS SPACEo to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+			}break;
 
-	
-		//temporary mouse text so i can figure out positions
-		DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
-                Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
+			case GAMEPLAY:{
+				//create if statements so things only get drawn when i need them
+				for (int i = 0; i < 7; i++){
+					notelist[i].vect.x = notelist[i].posnx;
+					notelist[i].vect.y = notelist[i].posny;
+				}
+				
+				DrawTexture(floortest1, 20, 40, WHITE);
+				DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
+				DrawTexture(playersoul, soulposx, soulposy, WHITE);
+				if (dir == 1) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
+				if (dir == 3) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
+				if (dir == 2) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
+				if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
+				for (int i = 0; i < 7; i++){
+					if (notelist[i].turnr > 0  && !notelist[i].collision) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
+					//if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);
+				}
+				//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
 
-
-		for (int i = 0; i < 7; i++){
 			
-			if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
-			if (enemies[i].dead)DrawTextureRec(explosion, enemies[i].explosionrect, enemies[i].explosionvect , WHITE);
-			
-			if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
+				//temporary mouse text so i can figure out positions
+				DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
+						Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
+
+
+				for (int i = 0; i < 7; i++){
+					
+					if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
+					if (enemies[i].dead)DrawTextureRec(explosion, enemies[i].explosionrect, enemies[i].explosionvect , WHITE);
+					
+					if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
+				}
+				if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
+				if (collisionball2) DrawText("2", 100, 100, 100, BLACK);
+				if (collisionball3) DrawText("3", 100, 100, 100, BLACK);
+				if (collisionball4) DrawText("4", 100, 100, 100, BLACK);
+
+				DrawCircle(position1x ,position1y, 20, GRAY);
+
+				DrawCircle(position2x ,position2y , 20, GRAY);
+
+				DrawCircle(position3x,position3y, 20, GRAY);
+
+				DrawCircle(position4x ,position4y , 20, GRAY);
+				
+				for (int i = 0; i < 7; i++){
+					if (i == notecheck) DrawRectangle(30 + 71*i, 800, 70, 70, RED);
+					DrawTexture(notenoan[i], 30 + 71*i, 803, WHITE);
+					DrawRectangleLines(30 + 71*i, 800, 70, 70, MAROON);
+				}
+
+
+				
+				
+				
+			}break;
+
+			case PAUSE:{
+				DrawRectangle(0, 100, GetScreenWidth(), 200, BLACK);
+				DrawText("are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
+			}break;
+
+			case CREDITS:{
+
+			}break;
+
+			case HIGHSCORE:{
+
+			}break;
+
+			case DEAD:{
+
+			}break;
+			default: break;
 		}
-		if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
-		if (collisionball2) DrawText("2", 100, 100, 100, BLACK);
-		if (collisionball3) DrawText("3", 100, 100, 100, BLACK);
-		if (collisionball4) DrawText("4", 100, 100, 100, BLACK);
-
-		DrawCircle(position1x ,position1y, 20, GRAY);
-
-		DrawCircle(position2x ,position2y , 20, GRAY);
-
-		DrawCircle(position3x,position3y, 20, GRAY);
-
-		DrawCircle(position4x ,position4y , 20, GRAY);
-		
-        for (int i = 0; i < 7; i++){
-			if (i == notecheck) DrawRectangle(30 + 71*i, 800, 70, 70, RED);
-			DrawTexture(notenoan[i], 30 + 71*i, 803, WHITE);
-            DrawRectangleLines(30 + 71*i, 800, 70, 70, MAROON);
-        }
-
 
 		
-		
-		if (exitWindowRequested){
-			DrawRectangle(0, 100, GetScreenWidth(), 200, BLACK);
-			DrawText("are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
-		}
 		
 		
 		// end the frame and get ready for the next one  (display frame, poll input, etc...)

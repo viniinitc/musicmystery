@@ -190,6 +190,7 @@ int main ()
 	Texture2D floortest1 = LoadTexture("floor1.png");
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
+	Texture mylogo = LoadTexture("logo.png");
 	
 	Timer turntimer = {0};
 	Timer notetimer = {0};
@@ -541,6 +542,7 @@ int main ()
 		switch(currentScreen){
 			case LOGO:{
 				DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
+				DrawTexture(mylogo, (GetScreenWidth()/2)-(mylogo.width/2), (GetScreenHeight()/2)-(mylogo.height/2), WHITE);
                 DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
 			}break;
 
@@ -639,9 +641,11 @@ int main ()
 	for (int i = 0; i < 7; i++){
 		UnloadTexture(notelist[i].sprite);
 		UnloadTexture(enemies[i].sprite);
+		UnloadTexture(notenoan[i]);
 	}
 
 
+	UnloadTexture(mylogo);
 	UnloadTexture(playersoul);
 	UnloadTexture(exitladder);
 	UnloadTexture(floortest1);

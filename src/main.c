@@ -153,7 +153,7 @@ int main ()
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
 
 	// Create the window and OpenGL context
-	InitWindow(1280, 900, "Hello Raylib");
+	InitWindow(1280, 900, "MusicMystery");
 	SetTargetFPS(60);
 
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
@@ -191,6 +191,7 @@ int main ()
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
 	Texture mylogo = LoadTexture("logo.png");
+	Texture2D storybutton = LoadTexture("buttonstory.png");
 	
 	Timer turntimer = {0};
 	Timer notetimer = {0};
@@ -202,10 +203,19 @@ int main ()
 
 	Vector2 position = { 350.0f, 280.0f};
 	Vector2 positionplayer = { 30.0f, 337.0f};
+	
 	Rectangle frameRec = {0.0f, 0.0f, (float)floortest1.width/16, (float)floortest1.height};
 	Rectangle explosionrec = {0.0f, 0.0f, (float)explosion.width/16, (float)explosion.height};
 	Rectangle frameRecplayer = {0.0f, 0.0f, (float)playersprite1.width/16, (float)playersprite1.height};
 	Rectangle frameRecplayer2 = {0.0f, 0.0f, (float)playersprite2.width/16, (float)playersprite2.height};
+
+	Rectangle buttonrec = {GetScreenWidth()/2.0f - storybutton.width/3/2.0f, GetScreenHeight()/2.0f - storybutton.height/2.0f, (float)storybutton.width/3, (float)storybutton.height};
+	Rectangle buttonsource = {0, 0, (float)storybutton.width/3, (float)storybutton.height};
+
+
+	int buttonstate = 0;
+	bool buttonactive = false;
+
 	int soulposx = (int)positionplayer.x; 
 	int soulposy = (int)positionplayer.y;
 
@@ -281,8 +291,10 @@ int main ()
 	SetExitKey(KEY_NULL);
 	bool exitWindowRequested = false;
 	bool exitWindow = false;
+	Vector2 mousebutn = {0.0f, 0.0f};
+
 	// game loop
-	while (!exitWindow)		// run the loop untill the user presses ESCAPE or presses the Close button on the window
+	while (!exitWindow)		
 	{
 
 		switch(currentScreen){
@@ -298,7 +310,20 @@ int main ()
 
 			case STARTSCREEN:{
 
-				if (IsKeyPressed(KEY_SPACE)) currentScreen = GAMEPLAY;
+				mousebutn = GetMousePosition();
+				buttonactive = false;
+
+				if (CheckCollisionPointRec(mousebutn, buttonrec)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonstate = 2;
+					else buttonstate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonactive = true;
+				} else buttonstate = 0;
+
+				buttonsource.x = (float)(buttonstate*(storybutton.width/3));
+
+				
+				if (buttonactive) currentScreen = GAMEPLAY;
 
 
 			}break;
@@ -550,6 +575,9 @@ int main ()
 				DrawRectangle(0, 0,	GetScreenWidth(), GetScreenHeight(), GREEN);
                 DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
                 DrawText("PRESS SPACEo to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+
+				DrawTextureRec(storybutton, buttonsource, (Vector2){ buttonrec.x, buttonrec.y }, WHITE);
+
 			}break;
 
 			case GAMEPLAY:{

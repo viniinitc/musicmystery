@@ -125,7 +125,7 @@ int main ()
 	int explosioncheck = 0;
 	int playerpoint = 0;
 	Vector2 enemiespossiblepossitions[15];
-
+	Texture notenoan[7];
 	bool collisionball1 = false;
 	bool collisionball2 = false;
 	bool collisionball3 = false;
@@ -147,6 +147,13 @@ int main ()
 	Texture playersprite4 = LoadTexture("playersprite4.png");
 	Texture exitladder = LoadTexture("ladder.png");
 	Texture playersoul = LoadTexture("playersoul.png");
+	notenoan[0] = LoadTexture("donoan.png");
+	notenoan[1] = LoadTexture("renoan.png");
+	notenoan[2] = LoadTexture("minoan.png");
+	notenoan[3] = LoadTexture("fanoan.png");
+	notenoan[4] = LoadTexture("solnoan.png");
+	notenoan[5] = LoadTexture("lanoan.png");
+	notenoan[6] = LoadTexture("sinoan.png");
 	notelist[0].sprite = LoadTexture("do.png");
 	notelist[1].sprite = LoadTexture("re.png");
 	notelist[2].sprite = LoadTexture("mi.png");
@@ -507,6 +514,12 @@ int main ()
 
 		DrawCircle(position4x ,position4y , 20, GRAY);
 		
+        for (int i = 0; i < 7; i++){
+			if (i == notecheck) DrawRectangle(30 + 71*i, 800, 70, 70, RED);
+			DrawTexture(notenoan[i], 30 + 71*i, 803, WHITE);
+            DrawRectangleLines(30 + 71*i, 800, 70, 70, MAROON);
+        }
+
 
 		
 		

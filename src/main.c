@@ -557,41 +557,60 @@ int main ()
 				//remember to update player movement 
 				if (TimerDone(&turntimer)){
 					if(IsKeyPressed(KEY_DOWN)) {
-						positionplayer.x += 80;
-						positionplayer.y += 50;
-						dir = 1;
-						turn++;
-						StartTimer(&turntimer,turnduration);
-						turncom = turn;
-						StartTimer(&notetimer, notetimerduration);
-						shootmove(notelist);
+
+						
+						if (dir == 1) {
+							positionplayer.x += 80;
+							positionplayer.y += 50;
+							
+							turn++;
+							StartTimer(&turntimer,turnduration);
+							turncom = turn;
+							StartTimer(&notetimer, notetimerduration);
+							shootmove(notelist);
+						} else {
+							dir = 1;
+						}
 					}
 					if(IsKeyPressed(KEY_UP)) {
-						positionplayer.x -= 80;
-						positionplayer.y -= 50;
-						dir = 4;
-						turn++;
-						StartTimer(&turntimer,turnduration);
-						turncom = turn;
-						shootmove(notelist);
+
+						if (dir == 4){
+							positionplayer.x -= 80;
+							positionplayer.y -= 50;
+							turn++;
+							StartTimer(&turntimer,turnduration);
+							turncom = turn;
+							shootmove(notelist);
+						} else {
+							dir = 4;
+						}
 					}
 					if(IsKeyPressed(KEY_RIGHT)) {
-						positionplayer.x += 80;
-						positionplayer.y -= 50;
-						dir = 2;
-						turn++;
-						StartTimer(&turntimer,turnduration);
-						turncom = turn;
-						shootmove(notelist);
+						
+
+						if (dir == 2){
+							positionplayer.x += 80;
+							positionplayer.y -= 50;
+							turn++;
+							StartTimer(&turntimer,turnduration);
+							turncom = turn;
+							shootmove(notelist);
+						} else {
+							dir = 2;
+						}
 					}
 					if(IsKeyPressed(KEY_LEFT)) {
-						positionplayer.x -= 80;
-						positionplayer.y += 50;
-						dir = 3;
-						turn++;
-						StartTimer(&turntimer,turnduration);
-						turncom = turn;
-						shootmove(notelist);
+
+						if (dir == 3){
+							positionplayer.x -= 80;
+							positionplayer.y += 50;
+							turn++;
+							StartTimer(&turntimer,turnduration);
+							turncom = turn;
+							shootmove(notelist);
+						} else {
+							dir = 3;
+						}
 					}
 					
 					if(IsKeyPressed(KEY_SPACE) && turn != 0){

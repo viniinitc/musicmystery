@@ -190,6 +190,9 @@ int main ()
 	notelist[5].notesound = LoadSound("Lachange.mp3");
 	notelist[6].notesound = LoadSound("Sichange.mp3");
 
+	Sound enemydeath = LoadSound("enemydeath.mp3");
+
+	Music startmusic = LoadMusicStream("gamesong.mp3");
 	// Load a texture from the resources directory
 	
 	Texture playersprite3 = LoadTexture("playersprite3.png");
@@ -375,6 +378,8 @@ int main ()
 	bool exitWindow = false;
 	Vector2 mousebutn = {0.0f, 0.0f};
 
+	PlayMusicStream(startmusic);
+
 	// game loop
 	while (!exitWindow)		
 	{
@@ -382,6 +387,7 @@ int main ()
 		switch(currentScreen){
 			case LOGO:{
 
+				UpdateMusicStream(startmusic);
 				framesCounter++;
 
 				if (framesCounter > 120){
@@ -392,6 +398,7 @@ int main ()
 
 			case STARTSCREEN:{
 
+				UpdateMusicStream(startmusic);
 				mousebutn = GetMousePosition();
 				
 				buttonstoryactive = false;
@@ -485,6 +492,7 @@ int main ()
 							enemies[i].explosionvect = enemies[i].vetor;
 							enemies[i].explosionvect.x -= 84;
 							enemies[i].explosionvect.y -= 94;
+							PlaySound(enemydeath);
 						}
 						enemies[i].vetor.x = -100;
 						enemies[i].vetor.y = -100;

@@ -595,37 +595,38 @@ int main ()
 					}
 					
 					if(IsKeyPressed(KEY_SPACE) && turn != 0){
-						turn++;
 						
 						
 						
-						notelist[notecheck].direct = dir;
-						notelist[notecheck].posnx = positionplayer.x;
-						notelist[notecheck].posny = positionplayer.y;
-						if(dir == 1) {
-							notelist[notecheck].posny += 70;
-							notelist[notecheck].posnx += 30;
-						}
-						if(dir == 2) {
-							notelist[notecheck].posny += 70;
-							notelist[notecheck].posnx += 35;
-						}
-						if(dir == 3) {
-							notelist[notecheck].posny += 70;
-							notelist[notecheck].posnx += 30;
-						}
-						if(dir == 4) {
-							notelist[notecheck].posny += 80;
-							notelist[notecheck].posnx += 30;
-						}
-						notelist[notecheck].turnr = turn;
-						
-						PlaySound(notelist[notecheck].notesound);
+						if(notelist[notecheck].turnr == 0 || turn - notelist[notecheck].turnr >= 3){
+							turn++;
+							notelist[notecheck].direct = dir;
+							notelist[notecheck].posnx = positionplayer.x;
+							notelist[notecheck].posny = positionplayer.y;
+							if(dir == 1) {
+								notelist[notecheck].posny += 70;
+								notelist[notecheck].posnx += 30;
+							}
+							if(dir == 2) {
+								notelist[notecheck].posny += 70;
+								notelist[notecheck].posnx += 35;
+							}
+							if(dir == 3) {
+								notelist[notecheck].posny += 70;
+								notelist[notecheck].posnx += 30;
+							}
+							if(dir == 4) {
+								notelist[notecheck].posny += 80;
+								notelist[notecheck].posnx += 30;
+							}
+							notelist[notecheck].turnr = turn;
+							
+							PlaySound(notelist[notecheck].notesound);
 
-						StartTimer(&turntimer,turnduration);
-						shootmove(notelist); 
-						turncom = turn;
-						
+							StartTimer(&turntimer,turnduration);
+							shootmove(notelist); 
+							turncom = turn;
+						}
 
 					}
 				}

@@ -392,6 +392,7 @@ int main ()
 
 				if (framesCounter > 120){
 					currentScreen = STARTSCREEN;
+					framecounter = 0;
 				}
 
 			}break;
@@ -530,7 +531,7 @@ int main ()
 				}
 
 				
-				//use the same logic for note travel time
+				
 
 				for (int i = 0; i < 7; i++){
 					if (enemies[i].framesExplosionCounter >= (60/framesSpeed))
@@ -560,8 +561,8 @@ int main ()
 
 						
 						if (dir == 1) {
-							positionplayer.x += 80;
-							positionplayer.y += 50;
+							
+							
 							
 							turn++;
 							StartTimer(&turntimer,turnduration);
@@ -675,7 +676,27 @@ int main ()
 				}
 				
 
+				if (!TimerDone(&turntimer)){
+					int newposition = positionplayer.x+80;
+					if (dir == 1 ){
+						positionplayer.x += 1.32;
+						positionplayer.y += 0.825;
+					}
+					if (dir == 2){
 
+
+					}
+					if (dir == 3){
+
+					}
+					if (dir == 4){
+						
+					}
+
+
+
+
+				}
 				UpdateTimer(&turntimer);
 
 				int pcolx = posx+32; 

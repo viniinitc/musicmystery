@@ -44,6 +44,7 @@ typedef struct{
 	Vector2 vect;
 	Texture2D sprite;
 	bool collision;
+	Sound notesound;
 
 }notes;
 
@@ -173,10 +174,21 @@ int main ()
 	int screenwidth = 1280;
 	int screenheight = 900;
 	InitWindow(screenwidth, screenheight, "MusicMystery");
+	InitAudioDevice();
 	SetTargetFPS(60);
 
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
 	SearchAndSetResourceDir("resources");
+
+
+	
+	notelist[0].notesound = LoadSound("Dochange.mp3");
+	notelist[1].notesound = LoadSound("Rechange.mp3");
+	notelist[2].notesound = LoadSound("Michange.mp3");
+	notelist[3].notesound = LoadSound("Fachange.mp3");
+	notelist[4].notesound = LoadSound("Solchange.mp3");
+	notelist[5].notesound = LoadSound("Lachange.mp3");
+	notelist[6].notesound = LoadSound("Sichange.mp3");
 
 	// Load a texture from the resources directory
 	
@@ -600,10 +612,12 @@ int main ()
 						}
 						notelist[notecheck].turnr = turn;
 						
+						PlaySound(notelist[notecheck].notesound);
 
 						StartTimer(&turntimer,turnduration);
 						shootmove(notelist); 
 						turncom = turn;
+						
 
 					}
 				}
@@ -836,6 +850,7 @@ int main ()
 		UnloadTexture(notelist[i].sprite);
 		UnloadTexture(enemies[i].sprite);
 		UnloadTexture(notenoan[i]);
+		UnloadSound(notelist[i].notesound);
 	}
 
 
@@ -849,7 +864,9 @@ int main ()
 	UnloadTexture(playersprite4);
 	
 
+
 	// destroy the window and cleanup the OpenGL context
+	CloseAudioDevice();
 	CloseWindow();
 	return 0;
 }

@@ -146,6 +146,7 @@ int main ()
 	enemytype enemies[7];
 
 	int restart = 0;
+	int notebeingshot = 0;
 	int exitladderx = 1160;
 	int exitladdery = 180;
 	int posx=64;
@@ -563,7 +564,7 @@ int main ()
 						if (dir == 1) {
 							
 							
-							
+							notebeingshot = 1;
 							turn++;
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
@@ -576,7 +577,7 @@ int main ()
 					if(IsKeyPressed(KEY_UP)) {
 
 						if (dir == 4){
-							
+							notebeingshot = 1;
 							turn++;
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
@@ -589,7 +590,7 @@ int main ()
 						
 
 						if (dir == 2){
-							
+							notebeingshot = 1;
 							turn++;
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
@@ -601,7 +602,7 @@ int main ()
 					if(IsKeyPressed(KEY_LEFT)) {
 
 						if (dir == 3){
-					
+							notebeingshot = 1;
 							turn++;
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
@@ -613,7 +614,7 @@ int main ()
 					
 					if(IsKeyPressed(KEY_SPACE) && turn != 0){
 						
-						
+						notebeingshot = 0;
 						
 						if(notelist[notecheck].turnr == 0 || turn - notelist[notecheck].turnr >= 3){
 							turn++;
@@ -672,8 +673,8 @@ int main ()
 					
 				}
 				
-
-				if (!TimerDone(&turntimer)){
+				//smooth movement of the player
+				if (!TimerDone(&turntimer) && notebeingshot){
 					int newposition = positionplayer.x+80;
 					if (dir == 1 ){
 						positionplayer.x += 1.32;
@@ -694,11 +695,18 @@ int main ()
 						positionplayer.y -= 0.825;
 
 					}
+				}
 
-
+				//smooth movement of the notes continue later
+				if (!TimerDone(&turntimer) && !notebeingshot){
+				
+					shootmove(notelist);
 
 
 				}
+
+
+
 				UpdateTimer(&turntimer);
 
 				int pcolx = posx+32; 
@@ -863,8 +871,8 @@ int main ()
 			}break;
 
 			case PAUSE:{
-				DrawRectangle(0, 100, screenwidth, 200, BLACK);
-				DrawText("are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
+				DrawRectangle(0, 0, screenwidth, screenheight, RED);
+				DrawText("are you sure you want to exit program?", 40, 180, 30, WHITE);
 
 				DrawTextureRec(continuebutton, buttoncontinuesource, (Vector2){ buttoncontinuebound.x, buttoncontinuebound.y}, WHITE);
 

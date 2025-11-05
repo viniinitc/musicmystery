@@ -576,8 +576,7 @@ int main ()
 					if(IsKeyPressed(KEY_UP)) {
 
 						if (dir == 4){
-							positionplayer.x -= 80;
-							positionplayer.y -= 50;
+							
 							turn++;
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
@@ -590,8 +589,7 @@ int main ()
 						
 
 						if (dir == 2){
-							positionplayer.x += 80;
-							positionplayer.y -= 50;
+							
 							turn++;
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
@@ -603,8 +601,7 @@ int main ()
 					if(IsKeyPressed(KEY_LEFT)) {
 
 						if (dir == 3){
-							positionplayer.x -= 80;
-							positionplayer.y += 50;
+					
 							turn++;
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
@@ -683,14 +680,19 @@ int main ()
 						positionplayer.y += 0.825;
 					}
 					if (dir == 2){
-
+						positionplayer.x += 1.32;
+						positionplayer.y -= 0.825;
 
 					}
 					if (dir == 3){
-
+						positionplayer.x -= 1.32;
+						positionplayer.y += 0.825;
 					}
 					if (dir == 4){
-						
+
+						positionplayer.x -= 1.32;
+						positionplayer.y -= 0.825;
+
 					}
 
 

@@ -200,10 +200,7 @@ int main ()
 	Music startmusic = LoadMusicStream("gamesong.mp3");
 	// Load a texture from the resources directory
 	
-	Texture playersprite3 = LoadTexture("playersprite3.png");
-	Texture playersprite4 = LoadTexture("playersprite4.png");
-	Texture exitladder = LoadTexture("ladder.png");
-	Texture playersoul = LoadTexture("playersoul.png");
+	
 
 
 	notenoan[0] = LoadTexture("donoan.png");
@@ -233,10 +230,24 @@ int main ()
 	enemies[6].sprite = LoadTexture("enemy7.png");
 
 
+	Texture obstacle = LoadTexture("obstacles.png");
+	Texture exitladder = LoadTexture("ladder.png");
 	Texture2D explosion = LoadTexture("explosion.png");
 	Texture2D floortest1 = LoadTexture("floor1.png");
+
+
+	Texture playersoul = LoadTexture("playersoul.png");
+	Texture playersprite3 = LoadTexture("playersprite3.png");
+	Texture playersprite4 = LoadTexture("playersprite4.png");
+	
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
+	Texture2D playerjumpdown = LoadTexture("playeranimationjumpdown.png");
+	Texture2D playerjumpright = LoadTexture("playeranimationjumpright.png");
+	Texture2D playerjumpup = LoadTexture("playeranimationjumpup.png");
+	Texture2D playerjumpleft = LoadTexture("playeranimationjumpleft.png");
+
+
 	Texture mylogo = LoadTexture("logo.png");
 
 

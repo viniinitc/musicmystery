@@ -5,6 +5,9 @@
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 #include "buttons.h"
 
+
+#define SQUARENOTES 1
+
 typedef enum GameScreen {
 
 	LOGO,
@@ -36,8 +39,8 @@ typedef enum buttontype {
 typedef struct{
 
 	int typenote;
-	int posny;
-	int posnx;
+	float posny;
+	float posnx;
 	int direct;
 	int turnr;
 	Rectangle rect;
@@ -86,21 +89,21 @@ void shootmove(notes* x){
 		int mov = x[i].direct;	
 		if (mov == 1){
 
-			x[i].posnx += 80;
-			x[i].posny += 50;
+			x[i].posnx += 1.32;
+			x[i].posny += 0.825*SQUARENOTES;
 			
 		}
 		if (mov == 3){
-			x[i].posnx -= 80;
-			x[i].posny += 50;
+			x[i].posnx -= 1.32;
+			x[i].posny += 0.825*SQUARENOTES;
 		}
 		if (mov == 2){
-			x[i].posnx += 80;
-			x[i].posny -= 50;
+			x[i].posnx += 1.32;
+			x[i].posny -= 0.825*SQUARENOTES;
 		}
 		if (mov == 4){
-			x[i].posnx -= 80;
-			x[i].posny -= 50;
+			x[i].posnx -= 1.32;
+			x[i].posny -= 0.825*SQUARENOTES;
 		}
 		
 	}
@@ -147,6 +150,7 @@ int main ()
 
 	int restart = 0;
 	int notebeingshot = 0;
+	int notemovement = 0;
 	int exitladderx = 1160;
 	int exitladdery = 180;
 	int posx=64;
@@ -615,27 +619,28 @@ int main ()
 					if(IsKeyPressed(KEY_SPACE) && turn != 0){
 						
 						notebeingshot = 0;
+						notemovement = 1;
 						
-						if(notelist[notecheck].turnr == 0 || turn - notelist[notecheck].turnr >= 3){
+						if(notelist[notecheck].turnr == 0 || (notelist[notecheck].posnx > screenwidth) || (notelist[notecheck].posny > screenheight) || (notelist[notecheck].posnx < 0) || (notelist[notecheck].posny < 0)){ //turn - notelist[notecheck].turnr >= 3
 							turn++;
 							notelist[notecheck].direct = dir;
 							notelist[notecheck].posnx = positionplayer.x;
 							notelist[notecheck].posny = positionplayer.y;
 							if(dir == 1) {
-								notelist[notecheck].posny += 70;
-								notelist[notecheck].posnx += 30;
+								notelist[notecheck].posny += 120;
+								notelist[notecheck].posnx += 110;
 							}
 							if(dir == 2) {
-								notelist[notecheck].posny += 70;
-								notelist[notecheck].posnx += 35;
+								notelist[notecheck].posny += 20;
+								notelist[notecheck].posnx += 115;
 							}
 							if(dir == 3) {
-								notelist[notecheck].posny += 70;
-								notelist[notecheck].posnx += 30;
+								notelist[notecheck].posny += 120;
+								notelist[notecheck].posnx -= 50;
 							}
 							if(dir == 4) {
-								notelist[notecheck].posny += 80;
-								notelist[notecheck].posnx += 30;
+								notelist[notecheck].posny += 30;
+								notelist[notecheck].posnx -= 50;
 							}
 							notelist[notecheck].turnr = turn;
 							
@@ -698,7 +703,7 @@ int main ()
 				}
 
 				//smooth movement of the notes continue later
-				if (!TimerDone(&turntimer) && !notebeingshot){
+				if (!TimerDone(&turntimer) && notemovement){
 				
 					shootmove(notelist);
 

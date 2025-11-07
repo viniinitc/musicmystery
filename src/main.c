@@ -149,18 +149,25 @@ int main ()
 	enemytype enemies[7];
 
 	int restart = 0;
+
+	int playermovemet = 0;
 	int notebeingshot = 0;
 	int notemovement = 0;
+
+
 	int exitladderx = 1160;
 	int exitladdery = 180;
 	int posx=64;
 	int posy=640;
 	int firstblockx = 48;
 	int firstblocky = 708;
+
 	int dir = 1;
+
 	int playerhp = 3;
 	int turn = 0;
 	int turncom;
+
 	int notecheck = 0;
 	int cont = 0;
 	int explosioncheck = 0;
@@ -243,8 +250,8 @@ int main ()
 	Texture2D playersprite1 = LoadTexture("playeranimation1.png");
 	Texture2D playersprite2 = LoadTexture("playeranimation2.png");
 	Texture2D playerjumpdown = LoadTexture("playeranimationjumpdown.png");
-	Texture2D playerjumpright = LoadTexture("playeranimationjumpright.png");
-	Texture2D playerjumpup = LoadTexture("playeranimationjumpup.png");
+	Texture2D playerjumpright = LoadTexture("playersanimationjumpright.png");
+	Texture2D playerjumpup = LoadTexture("playersanimationjumpup.png");
 	Texture2D playerjumpleft = LoadTexture("playeranimationjumpleft.png");
 
 
@@ -269,6 +276,11 @@ int main ()
 
 	Vector2 position = { 350.0f, 280.0f};
 	Vector2 positionplayer = { 30.0f, 337.0f};
+
+	Rectangle playerjumprectdown = {0.0f, 0.0f, (float)playerjumpdown.width/16, (float)playerjumpdown.height};
+	Rectangle playerjumprectup = {0.0f, 0.0f, (float)playerjumpup.width/16, (float)playerjumpup.height};
+	Rectangle playerjumprectright = {0.0f, 0.0f, (float)playerjumpright.width/16, (float)playerjumpright.height};
+	Rectangle playerjumprectleft = {0.0f, 0.0f, (float)playerjumpleft.width/16, (float)playerjumpleft.height};
 	
 	Rectangle frameRec = {0.0f, 0.0f, (float)floortest1.width/16, (float)floortest1.height};
 	Rectangle explosionrec = {0.0f, 0.0f, (float)explosion.width/16, (float)explosion.height};
@@ -324,6 +336,10 @@ int main ()
 	int currentFrame = 0;
 	int framesCounter = 0;
 	int framesSpeed = 12;
+
+
+	int currentplayerjumpframe = 0;
+	int playerjumpcounter = 0;
 
 	int currentExplosionFrame = 0;
 	int framesExplosionCounter = 0;
@@ -495,6 +511,9 @@ int main ()
 				Vector2 contact2 = {(float)position2x, (float)position2y};
 				Vector2 contact3 = {(float)position3x, (float)position3y};
 				Vector2 contact4 = {(float)position4x, (float)position4y};
+
+
+				//collision
 				for (int i = 0; i < 7; i++){
 
 					notelist[i].vect.x = (float)notelist[i].posnx + 32;
@@ -518,14 +537,13 @@ int main ()
 					
 				}	
 
-
-
-				
-				
 				collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
 				collisionball2 = CheckCollisionPointCircle(GetMousePosition(),contact2, 20.0);
 				collisionball3 = CheckCollisionPointCircle(GetMousePosition(),contact3, 20.0);
 				collisionball4 = CheckCollisionPointCircle(GetMousePosition(),contact4, 20.0);
+
+
+				//animation
 				
 				framesCounter++;
 
@@ -545,6 +563,9 @@ int main ()
 						notelist[i].rect.x = (float)currentFrame*(float)notelist[i].sprite.width/16;
 					}
 				}
+
+
+
 
 				
 				
@@ -567,18 +588,34 @@ int main ()
 					if(enemies[i].dead)enemies[i].framesExplosionCounter++;
 				}
 
+				if (playerjumpcounter >= (60/framesSpeed)){
+					
+					playerjumpcounter = 0;
+
+					currentplayerjumpframe++;
+					
+					if (currentplayerjumpframe > 15){
+						if (!TimerDone(&turntimer)) currentplayerjumpframe = 0;
+						else currentplayerjumpframe = 15;
+					}
+					if (dir == 1) playerjumprectdown.x = (float)currentplayerjumpframe*(float)playerjumpdown.width/16;
+					if (dir == 2) playerjumprectright.x = (float)currentplayerjumpframe*(float)playerjumpright.width/16;
+					if (dir == 3) playerjumprectleft.x = (float)currentplayerjumpframe*(float)playerjumpleft.width/16;
+					if (dir == 4) playerjumprectup.x = (float)currentplayerjumpframe*(float)playerjumpup.width/16;
+				}
+				if (playermovemet) playerjumpcounter++;
+
 				
 
 
 				
 				//remember to update player movement 
-				if (TimerDone(&turntimer)){
+				if (TimerDone(&turntimer) && (currentplayerjumpframe == 0 || currentplayerjumpframe == 15)){
 					if(IsKeyPressed(KEY_DOWN)) {
 
 						
-						if (dir == 1) {
-							
-							
+						if (dir == 1) {	
+							playermovemet = 1;
 							notebeingshot = 1;
 							turn++;
 							StartTimer(&turntimer,turnduration);
@@ -592,6 +629,7 @@ int main ()
 					if(IsKeyPressed(KEY_UP)) {
 
 						if (dir == 4){
+							playermovemet = 1;
 							notebeingshot = 1;
 							turn++;
 							StartTimer(&turntimer,turnduration);
@@ -603,8 +641,8 @@ int main ()
 					}
 					if(IsKeyPressed(KEY_RIGHT)) {
 						
-
 						if (dir == 2){
+							playermovemet = 1;
 							notebeingshot = 1;
 							turn++;
 							StartTimer(&turntimer,turnduration);
@@ -617,6 +655,7 @@ int main ()
 					if(IsKeyPressed(KEY_LEFT)) {
 
 						if (dir == 3){
+							playermovemet = 1;
 							notebeingshot = 1;
 							turn++;
 							StartTimer(&turntimer,turnduration);
@@ -631,6 +670,7 @@ int main ()
 						
 						notebeingshot = 0;
 						notemovement = 1;
+						playermovemet = 0;
 						
 						if(notelist[notecheck].turnr == 0 || (notelist[notecheck].posnx > screenwidth) || (notelist[notecheck].posny > screenheight) || (notelist[notecheck].posnx < 0) || (notelist[notecheck].posny < 0)){ //turn - notelist[notecheck].turnr >= 3
 							turn++;
@@ -663,6 +703,7 @@ int main ()
 						}
 
 					}
+					
 				}
 				if(IsKeyPressed(KEY_ONE)) {
 						notecheck++;
@@ -718,7 +759,6 @@ int main ()
 				
 					shootmove(notelist);
 
-
 				}
 
 
@@ -727,6 +767,8 @@ int main ()
 
 				int pcolx = posx+32; 
 				int pcoly = posy+64;
+
+				
 
 			}break;
 
@@ -838,10 +880,18 @@ int main ()
 				DrawTexture(floortest1, 20, 40, WHITE);
 				DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
 				DrawTexture(playersoul, soulposx, soulposy, WHITE);
-				if (dir == 1) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
-				if (dir == 3) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
-				if (dir == 2) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
-				if (dir == 4) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
+				if (dir == 1 && !playermovemet) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
+				if (dir == 3 && !playermovemet) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
+				if (dir == 2 && !playermovemet) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
+				if (dir == 4 && !playermovemet) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
+				if (dir == 1 && playermovemet) DrawTextureRec(playerjumpdown, playerjumprectdown, positionplayer, WHITE);
+				if (dir == 4 && playermovemet) DrawTextureRec(playerjumpup, playerjumprectup, positionplayer, WHITE);
+				if (dir == 2 && playermovemet) DrawTextureRec(playerjumpright, playerjumprectright, positionplayer, WHITE);
+				if (dir == 3 && playermovemet) DrawTextureRec(playerjumpleft, playerjumprectleft, positionplayer, WHITE);
+
+
+
+
 				for (int i = 0; i < 7; i++){
 					if (notelist[i].turnr > 0  && !notelist[i].collision) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
 					//if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);

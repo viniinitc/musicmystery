@@ -880,14 +880,6 @@ int main ()
 				DrawTexture(floortest1, 20, 40, WHITE);
 				DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
 				DrawTexture(playersoul, soulposx, soulposy, WHITE);
-				if (dir == 1 && !playermovemet) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
-				if (dir == 3 && !playermovemet) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
-				if (dir == 2 && !playermovemet) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
-				if (dir == 4 && !playermovemet) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
-				if (dir == 1 && playermovemet) DrawTextureRec(playerjumpdown, playerjumprectdown, positionplayer, WHITE);
-				if (dir == 4 && playermovemet) DrawTextureRec(playerjumpup, playerjumprectup, positionplayer, WHITE);
-				if (dir == 2 && playermovemet) DrawTextureRec(playerjumpright, playerjumprectright, positionplayer, WHITE);
-				if (dir == 3 && playermovemet) DrawTextureRec(playerjumpleft, playerjumprectleft, positionplayer, WHITE);
 
 
 
@@ -911,6 +903,20 @@ int main ()
 					
 					if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
 				}
+
+				DrawTexture(obstacle, 409, 395, WHITE);
+
+
+				if (dir == 1 && !playermovemet) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
+				if (dir == 3 && !playermovemet) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
+				if (dir == 2 && !playermovemet) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
+				if (dir == 4 && !playermovemet) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
+				if (dir == 1 && playermovemet) DrawTextureRec(playerjumpdown, playerjumprectdown, positionplayer, WHITE);
+				if (dir == 4 && playermovemet) DrawTextureRec(playerjumpup, playerjumprectup, positionplayer, WHITE);
+				if (dir == 2 && playermovemet) DrawTextureRec(playerjumpright, playerjumprectright, positionplayer, WHITE);
+				if (dir == 3 && playermovemet) DrawTextureRec(playerjumpleft, playerjumprectleft, positionplayer, WHITE);
+
+
 				if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
 				if (collisionball2) DrawText("2", 100, 100, 100, BLACK);
 				if (collisionball3) DrawText("3", 100, 100, 100, BLACK);

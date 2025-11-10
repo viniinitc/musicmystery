@@ -275,7 +275,7 @@ int main ()
 	float animationdur = 5.0f;
 
 	Vector2 position = { 350.0f, 280.0f};
-	Vector2 positionplayer = { 30.0f, 337.0f};
+	Vector2 positionplayer = { 30.0f, 327.0f};
 
 	Rectangle playerjumprectdown = {0.0f, 0.0f, (float)playerjumpdown.width/16, (float)playerjumpdown.height};
 	Rectangle playerjumprectup = {0.0f, 0.0f, (float)playerjumpup.width/16, (float)playerjumpup.height};
@@ -715,16 +715,16 @@ int main ()
 					//movement balls
 
 					position1x = (int)positionplayer.x + 154;
-					position1y = (int)positionplayer.y + 65; 
+					position1y = (int)positionplayer.y + 55; 
 
 					position2x = (int)positionplayer.x;
-					position2y = (int)positionplayer.y + 45; 
+					position2y = (int)positionplayer.y + 35; 
 
 					position3x = (int)positionplayer.x + 144;
-					position3y = (int)positionplayer.y + 170; 
+					position3y = (int)positionplayer.y + 160; 
 
 					position4x = (int)positionplayer.x;
-					position4y = (int)positionplayer.y + 160; 
+					position4y = (int)positionplayer.y + 150; 
 					
 
 					
@@ -908,7 +908,7 @@ int main ()
 
 
 				if (dir == 1 && !playermovemet) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
-				if (dir == 3 && !playermovemet) DrawTextureRec(playersprite2, frameRecplayer2, positionplayer, WHITE);
+				if (dir == 3 && !playermovemet) DrawTextureRec(playersprite2, frameRecplayer, positionplayer, WHITE);
 				if (dir == 2 && !playermovemet) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
 				if (dir == 4 && !playermovemet) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
 				if (dir == 1 && playermovemet) DrawTextureRec(playerjumpdown, playerjumprectdown, positionplayer, WHITE);

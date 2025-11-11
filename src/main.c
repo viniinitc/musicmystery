@@ -38,6 +38,7 @@ typedef struct squarefloor{
 	bool isenemyhere;
 	bool isplayerhere;
 	bool isobstaclehere;
+	bool isnotehere;
 	
 
 }squarefloor;
@@ -144,25 +145,121 @@ typedef struct{
 }enemytype;
 
 
-void enemymovement(enemytype enemy, Vector2 soulvect){
 
+void enemymovement(enemytype enemy,notes* note, squarefloor* floor,Vector2 soulvect){
+
+	int cont = 0;
+	int initenemylocation;
 	int down = 0;
 	int up = 0;
 	int right = 0;
 	int left = 0;
 	int limit = 15;
 	int goal = 0;
+	int lowest;
+	int highest;
+
 
 	Vector2 vectcheckdown = enemy.vetor;
 	Vector2 vectcheckup = enemy.vetor;
 	Vector2 vectcheckright = enemy.vetor;
 	Vector2 vectcheckleft = enemy.vetor;
+	
+
+
+
+	for (int i = 0; i < 8; i++){
+		for (int j = 0; j < 8; j++){
+			if (floor[cont].isenemyhere && CheckCollisionCircles(enemy.vetor, 30, floor[cont].position, 30)){
+				initenemylocation = cont;
+				i = 8;
+				j = 8;
+			}
+			cont++;
+		}
+	}
+
+	for (int i = 0; i < limit; i++){
+		if (initenemylocation >= 8) { //going up
+			if (!floor[initenemylocation - 8].isnotehere){
+				up++;
+				if(floor[initenemylocation - 8].isobstaclehere){
+					up = -3;
+				}
+			}else{
+				right++;
+				left++;
+				down++;
+			}
+		}
+
+		if ((initenemylocation+1) % 8 != 0){ //going right
+			if (!floor[initenemylocation + 1].isnotehere){
+				right++;
+				if(floor[initenemylocation +1].isobstaclehere){
+					right = -3;
+				}
+			}else{
+				up++;
+				left++;
+				down++;
+			}
+		}
+		
+		if (initenemylocation <= 55){ //going down
+			if(!floor[initenemylocation + 8].isnotehere){
+				down++;
+				if(!floor[initenemylocation+8].isobstaclehere){
+					down = -3;
+				}
+			}else{
+				up++;
+				right++;
+				left++;
+			}
+		}
+
+		if (initenemylocation % 8 != 0){ //going left
+			if(!floor[initenemylocation - 1].isnotehere){
+				left++;
+				left++;
+				if(!floor[initenemylocation - 1].isobstaclehere){
+					left = -3;
+				}
+			}else{
+				right++;
+				up++;
+				down++;
+			}
+		}
+
+		if (up > highest) highest = up;
+		if (right > highest) highest = right;
+		if (left > highest) highest = left;
+		if (down > highest) highest = down;
+
+
+		//remember to also consider the direction of the note, that's why i put notes* as a parameter
+
+		if(highest == left) {
+			initenemylocation --;
+		} else if (highest == down){
+			initenemylocation += 8;
+		} else if (highest == up){
+			initenemylocation -= 8;
+		} else {
+			initenemylocation ++;
+		}
+	}
+
+
 
 	for (int i = 0; i < limit; i++){
 		if(!CheckCollisionCircles(soulvect, 30, vectcheckup, 30) || !CheckCollisionCircles(soulvect, 30, vectcheckleft, 30)){
 
 			vectcheckdown.x = vectcheckdown.x + 144; 
 			vectcheckdown.y = vectcheckdown.y + 160; 
+
 
 			vectcheckup.x = vectcheckup.x; 
 			vectcheckup.y = vectcheckup.y + 35; 
@@ -751,23 +848,23 @@ int main ()
 
 				if (dir == 2){
 
-					positionballx = (int)positionplayer.x + 154;
-					positionbally = (int)positionplayer.y + 55; 
+					positionballx = (int)positionplayer.x + 134;
+					positionbally = (int)positionplayer.y + 75; 
 				} 
 
 				if (dir == 4){
-					positionballx = (int)positionplayer.x;
-					positionbally = (int)positionplayer.y + 35; 
+					positionballx = (int)positionplayer.x - 10;
+					positionbally = (int)positionplayer.y + 60; 
 				}
 
 				if (dir == 1){
 					positionballx = (int)positionplayer.x + 144;
-					positionbally = (int)positionplayer.y + 160; 
+					positionbally = (int)positionplayer.y + 170; 
 				}
 
 				if (dir == 3) {
-					positionballx = (int)positionplayer.x;
-					positionbally = (int)positionplayer.y + 150; 
+					positionballx = (int)positionplayer.x - 10;
+					positionbally = (int)positionplayer.y + 165; 
 				}
 
 				

@@ -139,6 +139,7 @@ typedef struct{
 	Rectangle rect;
 	bool collision;
 	bool dead;
+	bool canreach;
 	bool exists; // created this for the obstacle algorithm
 	
 
@@ -146,7 +147,9 @@ typedef struct{
 
 
 
-void enemymovement(enemytype enemy,notes* note, squarefloor* floor,Vector2 soulvect){
+
+
+int enemymovementlogic(enemytype enemy, squarefloor* floor){
 
 	int cont = 0;
 	int initenemylocation;
@@ -158,13 +161,8 @@ void enemymovement(enemytype enemy,notes* note, squarefloor* floor,Vector2 soulv
 	int goal = 0;
 	int lowest;
 	int highest;
+	int lista[limit];
 
-
-	Vector2 vectcheckdown = enemy.vetor;
-	Vector2 vectcheckup = enemy.vetor;
-	Vector2 vectcheckright = enemy.vetor;
-	Vector2 vectcheckleft = enemy.vetor;
-	
 
 
 
@@ -239,44 +237,62 @@ void enemymovement(enemytype enemy,notes* note, squarefloor* floor,Vector2 soulv
 		if (down > highest) highest = down;
 
 
-		//remember to also consider the direction of the note, that's why i put notes* as a parameter
+		//remember to also consider the direction of the note, that's why i put notes* as a parameter maybe
 
-		if(highest == left) {
+		if(highest == left){
 			initenemylocation --;
+			if (i == 0) goal = 3;
 		} else if (highest == down){
 			initenemylocation += 8;
+			if (i == 0) goal = 1;
 		} else if (highest == up){
 			initenemylocation -= 8;
+			if (i == 0) goal = 4;
 		} else {
 			initenemylocation ++;
+			if (i == 0) goal = 2;
 		}
+
+		
+
+		up = 0;
+		right = 0;
+		left = 0;
+		down = 0;
+	}
+
+	if (initenemylocation == 1 || initenemylocation == 8){
+		enemy.canreach = true;
 	}
 
 
 
-	for (int i = 0; i < limit; i++){
-		if(!CheckCollisionCircles(soulvect, 30, vectcheckup, 30) || !CheckCollisionCircles(soulvect, 30, vectcheckleft, 30)){
+	return goal;
 
-			vectcheckdown.x = vectcheckdown.x + 144; 
-			vectcheckdown.y = vectcheckdown.y + 160; 
+}
 
-
-			vectcheckup.x = vectcheckup.x; 
-			vectcheckup.y = vectcheckup.y + 35; 
-
-			vectcheckright.x = vectcheckright.x + 154; 
-			vectcheckright.y = vectcheckright.y + 55; 
-
-			vectcheckleft.x = vectcheckleft.x; 
-			vectcheckleft.y = vectcheckleft.y + 150; 
+void enemymovement(enemytype enemy, int path){
 
 
+	if (path == 1){
+		enemy.vetor.x += 1.32;
+		enemy.vetor.y += 0.825;
+	} else if (path == 3){
+		enemy.vetor.x -= 1.32;
+		enemy.vetor.y += 0.825;
+	} else if (path == 2){
+		enemy.vetor.x += 1.32;
+		enemy.vetor.y -= 0.825;
 
+	} else if (path == 4){
+		enemy.vetor.x -= 1.32;
+		enemy.vetor.y -= 0.825;
 
-		}
 	}
 
 }
+
+
 
 
 int main ()
@@ -756,6 +772,7 @@ int main ()
 							turncom = turn;
 							StartTimer(&notetimer, notetimerduration);
 							shootmove(notelist);
+							
 						} else {
 							dir = 1;
 						}
@@ -892,12 +909,25 @@ int main ()
 					}
 				}
 
-				//smooth movement of the notes continue later
+
+
+				//smooth movement of the notes
 				if (!TimerDone(&turntimer) && notemovement){
 				
 					shootmove(notelist);
 
+
 				}
+
+				// if (!TimerDone(&turntimer) && enemymove){
+
+				// 	for (int i = 0; i < 7; i++){
+				// 		if (enemies[i].exists){
+				// 			enemymovement(enemies[i], result of the logic);
+				// 		}
+				// 	}
+
+				// }
 
 
 

@@ -32,6 +32,15 @@ typedef enum buttontype {
 }buttontype;
 
 
+typedef struct squarefloor{
+
+	Vector2 position;
+	bool isenemyhere;
+	bool isplayerhere;
+	bool isobstaclehere;
+	
+
+}squarefloor;
 
 
 
@@ -129,10 +138,48 @@ typedef struct{
 	Rectangle rect;
 	bool collision;
 	bool dead;
+	bool exists; // created this for the obstacle algorithm
 	
 
 }enemytype;
 
+
+void enemymovement(enemytype enemy, Vector2 soulvect){
+
+	int down = 0;
+	int up = 0;
+	int right = 0;
+	int left = 0;
+	int limit = 15;
+	int goal = 0;
+
+	Vector2 vectcheckdown = enemy.vetor;
+	Vector2 vectcheckup = enemy.vetor;
+	Vector2 vectcheckright = enemy.vetor;
+	Vector2 vectcheckleft = enemy.vetor;
+
+	for (int i = 0; i < limit; i++){
+		if(!CheckCollisionCircles(soulvect, 30, vectcheckup, 30) || !CheckCollisionCircles(soulvect, 30, vectcheckleft, 30)){
+
+			vectcheckdown.x = vectcheckdown.x + 144; 
+			vectcheckdown.y = vectcheckdown.y + 160; 
+
+			vectcheckup.x = vectcheckup.x; 
+			vectcheckup.y = vectcheckup.y + 35; 
+
+			vectcheckright.x = vectcheckright.x + 154; 
+			vectcheckright.y = vectcheckright.y + 55; 
+
+			vectcheckleft.x = vectcheckleft.x; 
+			vectcheckleft.y = vectcheckleft.y + 150; 
+
+
+
+
+		}
+	}
+
+}
 
 
 int main ()
@@ -395,14 +442,9 @@ int main ()
 	}
 
 
-	int position1x;
-	int position1y;
-	int position2x;
-	int position2y;
-	int position3x;
-	int position3y;
-	int position4x;
-	int position4y;
+	int positionballx;
+	int positionbally;
+	
 
 	
 	SetExitKey(KEY_NULL);
@@ -507,10 +549,8 @@ int main ()
 
 
 
-				Vector2 contact1 = {(float)position1x, (float)position1y};
-				Vector2 contact2 = {(float)position2x, (float)position2y};
-				Vector2 contact3 = {(float)position3x, (float)position3y};
-				Vector2 contact4 = {(float)position4x, (float)position4y};
+				Vector2 contact1 = {(float)positionballx, (float)positionbally};
+
 
 
 				//collision
@@ -538,10 +578,7 @@ int main ()
 				}	
 
 				collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
-				collisionball2 = CheckCollisionPointCircle(GetMousePosition(),contact2, 20.0);
-				collisionball3 = CheckCollisionPointCircle(GetMousePosition(),contact3, 20.0);
-				collisionball4 = CheckCollisionPointCircle(GetMousePosition(),contact4, 20.0);
-
+		
 
 				//animation
 				
@@ -710,25 +747,29 @@ int main ()
 						if (notecheck > 6) notecheck = 0;
 				}
 
-				if (IsKeyPressed(KEY_CAPS_LOCK)) {
-					
-					//movement balls
+	
 
-					position1x = (int)positionplayer.x + 154;
-					position1y = (int)positionplayer.y + 55; 
+				if (dir == 2){
 
-					position2x = (int)positionplayer.x;
-					position2y = (int)positionplayer.y + 35; 
+					positionballx = (int)positionplayer.x + 154;
+					positionbally = (int)positionplayer.y + 55; 
+				} 
 
-					position3x = (int)positionplayer.x + 144;
-					position3y = (int)positionplayer.y + 160; 
-
-					position4x = (int)positionplayer.x;
-					position4y = (int)positionplayer.y + 150; 
-					
-
-					
+				if (dir == 4){
+					positionballx = (int)positionplayer.x;
+					positionbally = (int)positionplayer.y + 35; 
 				}
+
+				if (dir == 1){
+					positionballx = (int)positionplayer.x + 144;
+					positionbally = (int)positionplayer.y + 160; 
+				}
+
+				if (dir == 3) {
+					positionballx = (int)positionplayer.x;
+					positionbally = (int)positionplayer.y + 150; 
+				}
+
 				
 				//smooth movement of the player
 				if (!TimerDone(&turntimer) && notebeingshot){
@@ -922,13 +963,9 @@ int main ()
 				if (collisionball3) DrawText("3", 100, 100, 100, BLACK);
 				if (collisionball4) DrawText("4", 100, 100, 100, BLACK);
 
-				DrawCircle(position1x ,position1y, 20, GRAY);
+				DrawCircle(positionballx,positionbally, 20, GRAY);
+				
 
-				DrawCircle(position2x ,position2y , 20, GRAY);
-
-				DrawCircle(position3x,position3y, 20, GRAY);
-
-				DrawCircle(position4x ,position4y , 20, GRAY);
 				
 				for (int i = 0; i < 7; i++){
 					if (i == notecheck) DrawRectangle(30 + 71*i, 800, 70, 70, RED);

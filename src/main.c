@@ -124,8 +124,8 @@ typedef struct{
 
 	int hp;
 	int type;
-	int enemyx;
-	int enemyy;
+	float enemyx;
+	float enemyy;
 
 	int explosioncheck;
 	Vector2 explosionvect;
@@ -271,22 +271,30 @@ int enemymovementlogic(enemytype enemy, squarefloor* floor){
 
 }
 
-void enemymovement(enemytype enemy, int path){
+void enemymovement(enemytype* enemy, int path){
 
 
 	if (path == 1){
-		enemy.vetor.x += 1.32;
-		enemy.vetor.y += 0.825;
+		enemy[0].enemyx += 0.33;
+		enemy[0].enemyy += 0.2f;
+		enemy[0].vetor.x += 0.33;
+		enemy[0].vetor.y += 0.2;
 	} else if (path == 3){
-		enemy.vetor.x -= 1.32;
-		enemy.vetor.y += 0.825;
+		enemy[0].enemyx -= 0.33;
+		enemy[0].enemyy += 0.2f;
+		enemy[0].vetor.x -= 0.33;
+		enemy[0].vetor.y += 0.2;
 	} else if (path == 2){
-		enemy.vetor.x += 1.32;
-		enemy.vetor.y -= 0.825;
+		enemy[0].enemyx += 0.33;
+		enemy[0].enemyy -= 0.2f;
+		enemy[0].vetor.x += 0.33;
+		enemy[0].vetor.y -= 0.2;
 
 	} else if (path == 4){
-		enemy.vetor.x -= 1.32;
-		enemy.vetor.y -= 0.825;
+		enemy[0].enemyx -= 0.33;
+		enemy[0].enemyy -= 0.2f;
+		enemy[0].vetor.x -= 0.33;
+		enemy[0].vetor.y -= 0.2;
 
 	}
 
@@ -307,13 +315,16 @@ int main ()
 
 	notes notelist[7];
 	enemytype enemies[7];
+	squarefloor floor[64];
 
 	int restart = 0;
 
 	int playermovemet = 0;
 	int notebeingshot = 0;
 	int notemovement = 0;
+	int enemymove = 1;
 
+	int logic_result = 0;
 
 	int exitladderx = 1160;
 	int exitladdery = 180;
@@ -495,7 +506,7 @@ int main ()
 	
 	int currentFrame = 0;
 	int framesCounter = 0;
-	int framesSpeed = 12;
+	int framesSpeed = 15;
 
 
 	int currentplayerjumpframe = 0;
@@ -504,7 +515,21 @@ int main ()
 	int currentExplosionFrame = 0;
 	int framesExplosionCounter = 0;
 
-	
+	int contfloor = 0;
+
+	for (int i = 0; i < 8; i++){
+		for (int j = 0; j < 8; j++){
+			floor[contfloor].isenemyhere = true;
+			floor[contfloor].isnotehere = false;
+			floor[contfloor].isobstaclehere = false;
+			floor[contfloor].isplayerhere = false;
+			floor[contfloor].position.x = 100.0f + ((j+i)*77);
+			floor[contfloor].position.y = 445.0f - ((j)*50) + (i*50);
+			contfloor++;	
+		}
+	}
+
+
 
 	int contpos = 0;
 
@@ -521,6 +546,8 @@ int main ()
 
 
 	int *seq = LoadRandomSequence((unsigned int) 7, 0, 14);
+
+
 	
 
 
@@ -560,12 +587,15 @@ int main ()
 	
 
 	
+
 	SetExitKey(KEY_NULL);
 	bool exitWindowRequested = false;
 	bool exitWindow = false;
 	Vector2 mousebutn = {0.0f, 0.0f};
 
 	PlayMusicStream(startmusic);
+
+	enemies[0].exists = true;
 
 	// game loop
 	while (!exitWindow)		
@@ -776,6 +806,7 @@ int main ()
 						} else {
 							dir = 1;
 						}
+						logic_result = enemymovementlogic(enemies[0], floor);
 					}
 					if(IsKeyPressed(KEY_UP)) {
 
@@ -919,15 +950,15 @@ int main ()
 
 				}
 
-				// if (!TimerDone(&turntimer) && enemymove){
+				if (!TimerDone(&turntimer) && enemymove){
 
-				// 	for (int i = 0; i < 7; i++){
-				// 		if (enemies[i].exists){
-				// 			enemymovement(enemies[i], result of the logic);
-				// 		}
-				// 	}
+					for (int i = 0; i < 7; i++){
+						if (enemies[i].exists){
+							enemymovement(enemies, 3);
+						}
+					}
 
-				// }
+				}
 
 
 
@@ -1056,7 +1087,7 @@ int main ()
 					if (notelist[i].turnr > 0  && !notelist[i].collision) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
 					//if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);
 				}
-				//DrawTexture(notesprite1, notelist[0].posnx, notelist[0].posny, WHITE); //draw texture also to figure out the individual note movement
+				
 
 			
 				//temporary mouse text so i can figure out positions
@@ -1072,7 +1103,7 @@ int main ()
 					if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
 				}
 
-				DrawTexture(obstacle, 409, 395, WHITE);
+				//DrawTexture(obstacle, 409, 395, WHITE);
 
 
 				if (dir == 1 && !playermovemet) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);

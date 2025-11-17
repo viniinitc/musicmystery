@@ -3,7 +3,6 @@
 #include "stdlib.h"
 #include "raymath.h"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
-#include "buttons.h"
 
 
 #define SQUARENOTES 1
@@ -151,123 +150,7 @@ typedef struct{
 
 int enemymovementlogic(enemytype enemy, squarefloor* floor){
 
-	int cont = 0;
-	int initenemylocation;
-	int down = 0;
-	int up = 0;
-	int right = 0;
-	int left = 0;
-	int limit = 15;
-	int goal = 0;
-	int lowest;
-	int highest;
-	int lista[limit];
-
-
-
-
-	for (int i = 0; i < 8; i++){
-		for (int j = 0; j < 8; j++){
-			if (floor[cont].isenemyhere && CheckCollisionCircles(enemy.vetor, 30, floor[cont].position, 30)){
-				initenemylocation = cont;
-				i = 8;
-				j = 8;
-			}
-			cont++;
-		}
-	}
-
-	for (int i = 0; i < limit; i++){
-		if (initenemylocation >= 8) { //going up
-			if (!floor[initenemylocation - 8].isnotehere){
-				up++;
-				if(floor[initenemylocation - 8].isobstaclehere){
-					up = -3;
-				}
-			}else{
-				right++;
-				left++;
-				down++;
-			}
-		}
-
-		if ((initenemylocation+1) % 8 != 0){ //going right
-			if (!floor[initenemylocation + 1].isnotehere){
-				right++;
-				if(floor[initenemylocation +1].isobstaclehere){
-					right = -3;
-				}
-			}else{
-				up++;
-				left++;
-				down++;
-			}
-		}
-		
-		if (initenemylocation <= 55){ //going down
-			if(!floor[initenemylocation + 8].isnotehere){
-				down++;
-				if(!floor[initenemylocation+8].isobstaclehere){
-					down = -3;
-				}
-			}else{
-				up++;
-				right++;
-				left++;
-			}
-		}
-
-		if (initenemylocation % 8 != 0){ //going left
-			if(!floor[initenemylocation - 1].isnotehere){
-				left++;
-				left++;
-				if(!floor[initenemylocation - 1].isobstaclehere){
-					left = -3;
-				}
-			}else{
-				right++;
-				up++;
-				down++;
-			}
-		}
-
-		if (up > highest) highest = up;
-		if (right > highest) highest = right;
-		if (left > highest) highest = left;
-		if (down > highest) highest = down;
-
-
-		//remember to also consider the direction of the note, that's why i put notes* as a parameter maybe
-
-		if(highest == left){
-			initenemylocation --;
-			if (i == 0) goal = 3;
-		} else if (highest == down){
-			initenemylocation += 8;
-			if (i == 0) goal = 1;
-		} else if (highest == up){
-			initenemylocation -= 8;
-			if (i == 0) goal = 4;
-		} else {
-			initenemylocation ++;
-			if (i == 0) goal = 2;
-		}
-
-		
-
-		up = 0;
-		right = 0;
-		left = 0;
-		down = 0;
-	}
-
-	if (initenemylocation == 1 || initenemylocation == 8){
-		enemy.canreach = true;
-	}
-
-
-
-	return goal;
+	
 
 }
 
@@ -275,26 +158,26 @@ void enemymovement(enemytype* enemy, int path){
 
 
 	if (path == 1){
-		enemy[0].enemyx += 0.33;
-		enemy[0].enemyy += 0.2f;
-		enemy[0].vetor.x += 0.33;
-		enemy[0].vetor.y += 0.2;
+		enemy[0].enemyx += 1.32;
+		enemy[0].enemyy += 0.825f;
+		enemy[0].vetor.x += 1.32;
+		enemy[0].vetor.y += 0.825;
 	} else if (path == 3){
-		enemy[0].enemyx -= 0.33;
-		enemy[0].enemyy += 0.2f;
-		enemy[0].vetor.x -= 0.33;
-		enemy[0].vetor.y += 0.2;
+		enemy[0].enemyx -= 1.32;
+		enemy[0].enemyy += 0.825f;
+		enemy[0].vetor.x -= 1.32;
+		enemy[0].vetor.y += 0.825;
 	} else if (path == 2){
-		enemy[0].enemyx += 0.33;
-		enemy[0].enemyy -= 0.2f;
-		enemy[0].vetor.x += 0.33;
-		enemy[0].vetor.y -= 0.2;
+		enemy[0].enemyx += 1.32;
+		enemy[0].enemyy -= 0.825f;
+		enemy[0].vetor.x += 1.32;
+		enemy[0].vetor.y -= 0.825;
 
 	} else if (path == 4){
-		enemy[0].enemyx -= 0.33;
-		enemy[0].enemyy -= 0.2f;
-		enemy[0].vetor.x -= 0.33;
-		enemy[0].vetor.y -= 0.2;
+		enemy[0].enemyx -= 1.32;
+		enemy[0].enemyy -= 0.825f;
+		enemy[0].vetor.x -= 1.32;
+		enemy[0].vetor.y -= 0.825;
 
 	}
 
@@ -315,7 +198,8 @@ int main ()
 
 	notes notelist[7];
 	enemytype enemies[7];
-	squarefloor floor[64];
+	squarefloor** floor = (squarefloor**)malloc(8 * sizeof(squarefloor*));
+	for (int i = 0; i < 8; i++) floor[i] = (squarefloor*)malloc(8 * sizeof(squarefloor));
 
 	int restart = 0;
 
@@ -515,17 +399,15 @@ int main ()
 	int currentExplosionFrame = 0;
 	int framesExplosionCounter = 0;
 
-	int contfloor = 0;
 
 	for (int i = 0; i < 8; i++){
 		for (int j = 0; j < 8; j++){
-			floor[contfloor].isenemyhere = true;
-			floor[contfloor].isnotehere = false;
-			floor[contfloor].isobstaclehere = false;
-			floor[contfloor].isplayerhere = false;
-			floor[contfloor].position.x = 100.0f + ((j+i)*77);
-			floor[contfloor].position.y = 445.0f - ((j)*50) + (i*50);
-			contfloor++;	
+			floor[i][j].isenemyhere = true;
+			floor[i][j].isnotehere = false;
+			floor[i][j].isobstaclehere = false;
+			floor[i][j].isplayerhere = false;
+			floor[i][j].position.x = 100.0f + ((j+i)*77);
+			floor[i][j].position.y = 445.0f - ((j)*50) + (i*50);	
 		}
 	}
 
@@ -699,10 +581,34 @@ int main ()
 				//collision
 				for (int i = 0; i < 7; i++){
 
+
+					
 					notelist[i].vect.x = (float)notelist[i].posnx + 32;
 					notelist[i].vect.y = (float)notelist[i].posny + 32;
-					enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f,enemies[i].vetor, 20.0f);
-					notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 20.0f, enemies[i].vetor,20.0f);
+					enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 25.0f,enemies[i].vetor, 25.0f);
+					notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 25.0f, enemies[i].vetor,25.0f);
+					for (int j = 0; j < 8; j++){
+						for(int h = 0; h < 8; h++){
+							if(notelist[i].direct == 1){
+								if (CheckCollisionCircles((Vector2){notelist[i].vect.x + 16, notelist[i].vect.y + 16}, 20.0f, floor[j][h].position, 25.0f)) floor[j][h].isnotehere = true;
+								else floor[j][h].isnotehere = false;
+							} 
+							if(notelist[i].direct == 2){
+								if (CheckCollisionCircles((Vector2){notelist[i].vect.x + 16, notelist[i].vect.y - 16}, 20.0f, floor[j][h].position, 25.0f)) floor[j][h].isnotehere = true;
+								else floor[j][h].isnotehere = false;
+							} 
+							if(notelist[i].direct == 3){
+								if (CheckCollisionCircles((Vector2){notelist[i].vect.x - 16, notelist[i].vect.y + 16}, 20.0f, floor[j][h].position, 25.0f)) floor[j][h].isnotehere = true;
+								else floor[j][h].isnotehere = false;
+							} 
+							if(notelist[i].direct == 4){
+								if (CheckCollisionCircles((Vector2){notelist[i].vect.x - 16, notelist[i].vect.y - 16}, 20.0f, floor[j][h].position, 25.0f)) floor[j][h].isnotehere = true;
+								else floor[j][h].isnotehere = false;
+							} 
+							
+							
+						}
+					}
 					if (notelist[i].collision) notelist[i].turnr = 0;
 					if (enemies[i].collision) enemies[i].dead = true;
 					if (enemies[i].dead) {
@@ -860,19 +766,19 @@ int main ()
 							notelist[notecheck].posnx = positionplayer.x;
 							notelist[notecheck].posny = positionplayer.y;
 							if(dir == 1) {
-								notelist[notecheck].posny += 120;
-								notelist[notecheck].posnx += 110;
+								notelist[notecheck].posny += 140;
+								notelist[notecheck].posnx += 105;
 							}
 							if(dir == 2) {
-								notelist[notecheck].posny += 20;
+								notelist[notecheck].posny += 30;
 								notelist[notecheck].posnx += 115;
 							}
 							if(dir == 3) {
-								notelist[notecheck].posny += 120;
+								notelist[notecheck].posny += 140;
 								notelist[notecheck].posnx -= 50;
 							}
 							if(dir == 4) {
-								notelist[notecheck].posny += 30;
+								notelist[notecheck].posny += 40;
 								notelist[notecheck].posnx -= 50;
 							}
 							notelist[notecheck].turnr = turn;
@@ -952,11 +858,10 @@ int main ()
 
 				if (!TimerDone(&turntimer) && enemymove){
 
-					for (int i = 0; i < 7; i++){
-						if (enemies[i].exists){
-							enemymovement(enemies, 3);
-						}
-					}
+				
+					enemymovement(enemies, 3);
+						
+					
 
 				}
 
@@ -1122,6 +1027,16 @@ int main ()
 				if (collisionball4) DrawText("4", 100, 100, 100, BLACK);
 
 				DrawCircle(positionballx,positionbally, 20, GRAY);
+
+				for (int i = 0; i < 8; i++){
+					for (int j = 0; j < 8; j++){
+						if (!floor[i][j].isnotehere) DrawCircle(floor[i][j].position.x, floor[i][j].position.y, 25.0f, RED );
+					
+					}
+				}
+				for (int i = 0; i < 7; i++){
+					if (notelist[i].turnr != 0)DrawCircle(notelist[i].vect.x, notelist[i].vect.y, 25.0f, YELLOW);
+				}
 				
 
 				
@@ -1189,6 +1104,11 @@ int main ()
 	UnloadTexture(playersprite3);
 	UnloadTexture(playersprite4);
 	
+	for (int j = 0; j < 8; j++){
+		free(floor[j]); 
+	}
+	free(floor);
+
 
 
 	// destroy the window and cleanup the OpenGL context

@@ -125,6 +125,7 @@ typedef struct{
 	int type;
 	float enemyx;
 	float enemyy;
+	int direction;
 
 	int explosioncheck;
 	Vector2 explosionvect;
@@ -154,33 +155,33 @@ int enemymovementlogic(enemytype enemy, squarefloor* floor){
 
 }
 
-void enemymovement(enemytype* enemy, int path){
+void enemymovement(enemytype* enemy){
 
+	for (int i = 0; i < 7; i++){
+		if (enemy[i].direction == 1 && enemy[i].exists){
+			enemy[i].enemyx += 1.32;
+			enemy[i].enemyy += 0.825f;
+			enemy[i].vetor.x += 1.32;
+			enemy[i].vetor.y += 0.825;
+		} else if (enemy[i].direction == 3 && enemy[i].exists){
+			enemy[i].enemyx -= 1.32;
+			enemy[i].enemyy += 0.825f;
+			enemy[i].vetor.x -= 1.32;
+			enemy[i].vetor.y += 0.825;
+		} else if (enemy[i].direction == 2 && enemy[i].exists){
+			enemy[i].enemyx += 1.32;
+			enemy[i].enemyy -= 0.825f;
+			enemy[i].vetor.x += 1.32;
+			enemy[i].vetor.y -= 0.825;
 
-	if (path == 1){
-		enemy[0].enemyx += 1.32;
-		enemy[0].enemyy += 0.825f;
-		enemy[0].vetor.x += 1.32;
-		enemy[0].vetor.y += 0.825;
-	} else if (path == 3){
-		enemy[0].enemyx -= 1.32;
-		enemy[0].enemyy += 0.825f;
-		enemy[0].vetor.x -= 1.32;
-		enemy[0].vetor.y += 0.825;
-	} else if (path == 2){
-		enemy[0].enemyx += 1.32;
-		enemy[0].enemyy -= 0.825f;
-		enemy[0].vetor.x += 1.32;
-		enemy[0].vetor.y -= 0.825;
+		} else if (enemy[i].direction == 4 && enemy[i].exists){
+			enemy[i].enemyx -= 1.32;
+			enemy[i].enemyy -= 0.825f;
+			enemy[i].vetor.x -= 1.32;
+			enemy[i].vetor.y -= 0.825;
 
-	} else if (path == 4){
-		enemy[0].enemyx -= 1.32;
-		enemy[0].enemyy -= 0.825f;
-		enemy[0].vetor.x -= 1.32;
-		enemy[0].vetor.y -= 0.825;
-
+		}
 	}
-
 }
 
 
@@ -411,7 +412,37 @@ int main ()
 		}
 	}
 
+	int map = GetRandomValue(1, 2);
 
+	if (map == 1){
+		floor[0][2].isobstaclehere = true;
+		floor[0][5].isobstaclehere = true;
+		floor[2][2].isobstaclehere = true;
+		floor[2][5].isobstaclehere = true;
+		floor[2][7].isobstaclehere = true;
+		floor[4][0].isobstaclehere = true;
+		floor[5][2].isobstaclehere = true;
+		floor[5][5].isobstaclehere = true;
+		floor[7][2].isobstaclehere = true;
+		floor[7][5].isobstaclehere = true;
+
+	} else {
+		floor[2][0].isobstaclehere = true;
+		floor[5][0].isobstaclehere = true;
+		floor[2][2].isobstaclehere = true;
+		floor[5][2].isobstaclehere = true;
+		floor[7][2].isobstaclehere = true;
+		floor[0][4].isobstaclehere = true;
+		floor[2][5].isobstaclehere = true;
+		floor[5][5].isobstaclehere = true;
+		floor[2][7].isobstaclehere = true;
+		floor[5][7].isobstaclehere = true;
+		floor[4][4].isobstaclehere = true;
+		floor[1][4].isobstaclehere = true;
+		floor[6][3].isobstaclehere = true;
+		floor[7][5].isobstaclehere = true;
+
+	}
 
 	int contpos = 0;
 
@@ -430,6 +461,7 @@ int main ()
 	int *seq = LoadRandomSequence((unsigned int) 7, 0, 14);
 
 
+	
 	
 
 
@@ -461,6 +493,8 @@ int main ()
 		enemies[i].explosionrect.y = 0.0f;
 		enemies[i].explosionrect.height = (float)explosion.height;
 		enemies[i].explosionrect.width = (float)explosion.width/16;
+		enemies[i].direction = 3;
+		enemies[i].exists = true;
 	}
 
 
@@ -859,7 +893,7 @@ int main ()
 				if (!TimerDone(&turntimer) && enemymove){
 
 				
-					enemymovement(enemies, 3);
+					enemymovement(enemies);
 						
 					
 
@@ -1002,7 +1036,7 @@ int main ()
 
 				for (int i = 0; i < 7; i++){
 					
-					if(!enemies[i].dead)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
+					if(!enemies[i].dead && enemies[i].exists)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
 					if (enemies[i].dead)DrawTextureRec(explosion, enemies[i].explosionrect, enemies[i].explosionvect , WHITE);
 					
 					if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
@@ -1030,13 +1064,13 @@ int main ()
 
 				for (int i = 0; i < 8; i++){
 					for (int j = 0; j < 8; j++){
-						if (!floor[i][j].isnotehere) DrawCircle(floor[i][j].position.x, floor[i][j].position.y, 25.0f, RED );
+						if (floor[i][j].isnotehere) DrawCircle(floor[i][j].position.x, floor[i][j].position.y, 25.0f, RED );
 					
 					}
 				}
-				for (int i = 0; i < 7; i++){
-					if (notelist[i].turnr != 0)DrawCircle(notelist[i].vect.x, notelist[i].vect.y, 25.0f, YELLOW);
-				}
+				// for (int i = 0; i < 7; i++){
+				// 	if (notelist[i].turnr != 0)DrawCircle(notelist[i].vect.x, notelist[i].vect.y, 25.0f, YELLOW);
+				// }
 				
 
 				

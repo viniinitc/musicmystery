@@ -141,6 +141,8 @@ typedef struct{
 	bool dead;
 	bool canreach;
 	bool exists; // created this for the obstacle algorithm
+	int i;
+	int j;
 	
 
 }enemytype;
@@ -149,9 +151,53 @@ typedef struct{
 
 
 
-int enemymovementlogic(enemytype enemy, squarefloor* floor){
+int enemymovementlogic(enemytype* enemy, squarefloor *floor){
+
+	int number;
+	int up = 0;
+	int down = 0;
+	int right = 0;
+	int left = 0;
+	squarefloor* aux = floor;
 
 	
+	
+	for (int h = 0; h < 7; h++){
+
+		int i = enemy[h].i;
+		int j = enemy[h].j;
+
+		if(i > 0 && !(floor + ((i - 1) * 8) + j)->isobstaclehere){
+				up++;
+				up++;
+		}
+		if(i < 8-1 && !(floor + ((i + 1) * 8) + j)->isobstaclehere){
+				down++;
+				down++;
+				down++;
+		}
+		if(j > 0 && !(floor + (i * 8) + (j - 1))->isobstaclehere){
+			left++;
+			left++;
+			left++;
+			left++;
+		}
+		if(j < 8-1 && !(floor + (i * 8) + (j + 1))->isobstaclehere){
+			right++;
+		}
+
+		if(left > down || left > up || left > right) enemy[h].direction = 3;
+		else if (down > left || down > up || down > right) enemy[h].direction = 1;
+		else if (up > down && up > left && up > right) enemy[h].direction = 4;
+		else {
+			enemy[h].direction = 2;
+		}
+	}
+
+
+
+
+
 
 }
 
@@ -746,7 +792,7 @@ int main ()
 						} else {
 							dir = 1;
 						}
-						logic_result = enemymovementlogic(enemies[0], floor);
+						//logic_result = enemymovementlogic(enemies[0], floor);
 					}
 					if(IsKeyPressed(KEY_UP)) {
 

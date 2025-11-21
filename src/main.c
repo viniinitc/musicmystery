@@ -368,6 +368,15 @@ int main ()
 	Texture2D menubutton = LoadTexture("buttonmenu.png");
 	Texture2D creditsbutton = LoadTexture("buttoncredits.png");
 
+	Texture2D background1 = LoadTexture("sky.png");
+	Texture2D background2 = LoadTexture("sky2.png");
+	Texture2D background3 = LoadTexture("sky3.png");
+
+	float scrollingback = 0.0f;
+	float scrollingmid = 0.0f;
+	float scrollingfore = 0.0f;
+
+
 	Timer turntimer = {0};
 	Timer notetimer = {0};
 
@@ -650,7 +659,13 @@ int main ()
 
 
 	
-				
+				scrollingback -= 0.1f;
+				scrollingmid -= 0.5f;
+				scrollingfore -= 1.0f;
+
+				if (scrollingback <= -background1.width*2) scrollingback = 0;
+				if (scrollingmid <= -background2.width*2) scrollingmid = 0;
+				if (scrollingfore <= -background3.width*2) scrollingfore = 0;
 
 
 
@@ -1026,7 +1041,9 @@ int main ()
 		BeginDrawing();
 
 		// Setup the back buffer for drawing (clear color and depth buffers)
-		ClearBackground(WHITE);
+		ClearBackground(GetColor(0x052c46ff));
+
+
 
 		// draw some text using the default font
 		DrawText("Hello Raylib ", 200,200,20,WHITE);
@@ -1055,6 +1072,20 @@ int main ()
 			}break;
 
 			case GAMEPLAY:{
+
+
+				DrawTextureEx(background1, (Vector2){ scrollingback, 20 }, 0.0f, 2.0f, WHITE);
+				DrawTextureEx(background1, (Vector2){ background1.width + scrollingback, 20 }, 0.0f, 2.0f, WHITE);
+
+				DrawTextureEx(background2, (Vector2){ scrollingmid, 20 }, 0.0f, 2.0f, WHITE);
+				DrawTextureEx(background2, (Vector2){ background2.width + scrollingmid, 20 }, 0.0f, 2.0f, WHITE);
+
+
+				DrawTextureEx(background3, (Vector2){ scrollingfore, 70 }, 0.0f, 2.0f, WHITE);
+				DrawTextureEx(background3, (Vector2){ background3.width + scrollingfore, 70 }, 0.0f, 2.0f, WHITE);
+
+
+
 				//create if statements so things only get drawn when i need them
 				for (int i = 0; i < 7; i++){
 					notelist[i].vect.x = notelist[i].posnx;
@@ -1183,7 +1214,9 @@ int main ()
 	UnloadTexture(playersprite2);
 	UnloadTexture(playersprite3);
 	UnloadTexture(playersprite4);
-	
+	UnloadTexture(background1);
+	UnloadTexture(background2);
+	UnloadTexture(background3);
 	for (int j = 0; j < 8; j++){
 		free(floor[j]); 
 	}

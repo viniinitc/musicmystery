@@ -1026,7 +1026,8 @@ int main ()
 			}break;
 
 			case CREDITS:{
-
+				UpdateMusicStream(startmusic);
+				if (IsKeyPressed(KEY_ESCAPE)) currentScreen = STARTSCREEN;
 			}break;
 
 			case HIGHSCORE:{
@@ -1037,18 +1038,13 @@ int main ()
 		
 		
 		
-		// drawing
+
 		BeginDrawing();
 
-		// Setup the back buffer for drawing (clear color and depth buffers)
+
 		ClearBackground(GetColor(0x052c46ff));
 
 
-
-		// draw some text using the default font
-		DrawText("Hello Raylib ", 200,200,20,WHITE);
-
-		// draw our texture to the screen
 		switch(currentScreen){
 			case LOGO:{
 				DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
@@ -1176,7 +1172,10 @@ int main ()
 			}break;
 
 			case CREDITS:{
-
+				DrawText("Game made entirely by Vinicius Tenorio", 380, 400, 30, RED);
+				DrawText("This project was made without any help of A.I", 0, 880, 5, BLACK);
+				DrawText("Press exit to go back to the main menu", 380, 450, 20, WHITE );
+				
 			}break;
 
 			case HIGHSCORE:{
@@ -1192,12 +1191,9 @@ int main ()
 		
 		
 		
-		// end the frame and get ready for the next one  (display frame, poll input, etc...)
 		EndDrawing();
 	}
 
-	// cleanup
-	// unload our texture so it can be cleaned up
 	for (int i = 0; i < 7; i++){
 		UnloadTexture(notelist[i].sprite);
 		UnloadTexture(enemies[i].sprite);
@@ -1224,7 +1220,6 @@ int main ()
 
 
 
-	// destroy the window and cleanup the OpenGL context
 	CloseAudioDevice();
 	CloseWindow();
 	return 0;

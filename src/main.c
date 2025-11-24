@@ -151,47 +151,51 @@ typedef struct{
 
 
 
-int enemymovementlogic(enemytype* enemy, squarefloor *floor){
+void enemymovementlogic(enemytype* enemy, squarefloor *floor){
 
 	int number;
 	int up = 0;
 	int down = 0;
 	int right = 0;
 	int left = 0;
-	squarefloor* aux = floor;
+
+	squarefloor aux[8][8];
+
+	for (int i = 0; i < 8; i++){
+		for (int j = 0; j < 8; j++){
+			aux[i][j] = *(floor + (i*8) + j);
+		}
+	}
 
 	
 	
 	for (int h = 0; h < 7; h++){
 
+
 		int i = enemy[h].i;
 		int j = enemy[h].j;
 
-		if(i > 0 && !(floor + ((i - 1) * 8) + j)->isobstaclehere){
-				up++;
-				up++;
-		}
-		if(i < 8-1 && !(floor + ((i + 1) * 8) + j)->isobstaclehere){
-				down++;
-				down++;
-				down++;
-		}
-		if(j > 0 && !(floor + (i * 8) + (j - 1))->isobstaclehere){
-			left++;
-			left++;
-			left++;
-			left++;
-		}
-		if(j < 8-1 && !(floor + (i * 8) + (j + 1))->isobstaclehere){
-			right++;
+
+		// left = GetRandomValue(1, 10);
+		// right = GetRandomValue(0, 8);
+		// up = GetRandomValue(1, 8);
+		// down = GetRandomValue(1, 8);
+
+		if(j > 0 && !aux[i][j-1].isobstaclehere){
+			enemy[h].direction = 3;
+			enemy[h].j--;
+		}else if (i > 0 && !aux[i-1][j].isobstaclehere){
+			enemy[h].direction = 4;
+			enemy[h].i--;
+		}else if(i < 8-1 && !aux[i+1][j].isobstaclehere){
+			enemy[h].direction = 1;
+			enemy[h].i++;
+		}else if (j < 8-1 && !aux[i][j+1].isobstaclehere){
+			enemy[h].direction = 2;
+			enemy[h].j++;
 		}
 
-		if(left > down || left > up || left > right) enemy[h].direction = 3;
-		else if (down > left || down > up || down > right) enemy[h].direction = 1;
-		else if (up > down && up > left && up > right) enemy[h].direction = 4;
-		else {
-			enemy[h].direction = 2;
-		}
+
 	}
 
 
@@ -255,7 +259,7 @@ int main ()
 	int notemovement = 0;
 	int enemymove = 1;
 
-	int logic_result = 0;
+
 
 	int exitladderx = 1160;
 	int exitladdery = 180;
@@ -267,6 +271,8 @@ int main ()
 	int dir = 1;
 
 	int playerhp = 3;
+	int playeri = 0;
+	int playerj = 0;
 	int turn = 0;
 	int turncom;
 
@@ -274,7 +280,7 @@ int main ()
 	int cont = 0;
 	int explosioncheck = 0;
 	int playerpoint = 0;
-	Vector2 enemiespossiblepossitions[15];
+	Vector2 enemiespossiblepossitions[7];
 	Texture notenoan[7];
 	bool collisionball1 = false;
 	bool collisionball2 = false;
@@ -499,21 +505,50 @@ int main ()
 
 	}
 
-	int contpos = 0;
 
-	for (int j = 0; j < 2; j++){
-		for (int i = 0; i < 7; i++){
 			
-			enemiespossiblepossitions[contpos].x = 600.0 - (float)(j* 80) + (float)(i * 80);
-			enemiespossiblepossitions[contpos].y = 0.0 + (float)(j * 50) + (float)(i * 50);
-			contpos++;
-		}
-	}
-	enemiespossiblepossitions[contpos].x = 600.0 - 80.0 + (float)(7 * 80);
-	enemiespossiblepossitions[contpos].y = 0.0 + 50.0 + (float)(7 * 50);
+	enemiespossiblepossitions[0].x = 600.0 - (float)(1* 80) + (float)(7 * 80);
+	enemiespossiblepossitions[0].y = 0.0 + (float)(1 * 50) + (float)(7 * 50);
+
+	enemiespossiblepossitions[1].x = 600.0 - (float)(80.0*0) + (float)(4 * 80);
+	enemiespossiblepossitions[1].y = 0.0 + (float)(50.0*0) + (float)(4 * 50);
+
+	enemiespossiblepossitions[2].x = 600.0 - (float)(6* 80) + (float)(7 * 80);
+	enemiespossiblepossitions[2].y = 0.0 + (float)(6 * 50) + (float)(7 * 50);
+	
+	enemiespossiblepossitions[3].x = 600.0 - (float)(4* 80) + (float)(4 * 80);
+	enemiespossiblepossitions[3].y = 0.0 + (float)(4 * 50) + (float)(4 * 50);
+
+	enemiespossiblepossitions[4].x = 600.0 - (float)(0* 80) + (float)(0 * 80);
+	enemiespossiblepossitions[4].y = 0.0 + (float)(0 * 50) + (float)(0 * 50);
+
+	enemiespossiblepossitions[5].x = 600.0 - (float)(4* 80) + (float)(7 * 80);
+	enemiespossiblepossitions[5].y = 0.0 + (float)(4 * 50) + (float)(7* 50);
+
+	enemiespossiblepossitions[6].x = 600.0 - (float)(2* 80) + (float)(3 * 80);
+	enemiespossiblepossitions[6].y = 0.0 + (float)(2 * 50) + (float)(3 * 50);
 
 
-	int *seq = LoadRandomSequence((unsigned int) 7, 0, 14);
+	enemies[0].i = 7;
+	enemies[0].j = 6;
+
+	enemies[1].i = 4;
+	enemies[1].j = 7;
+
+	enemies[2].i = 7;
+	enemies[2].j = 1;
+
+	enemies[3].i = 4;
+	enemies[3].j = 3;
+
+	enemies[4].i = 0;
+	enemies[4].j = 7;
+
+	enemies[5].i = 7;
+	enemies[5].j = 3;
+
+	enemies[6].i = 3;
+	enemies[6].j = 5;
 
 
 	
@@ -537,8 +572,8 @@ int main ()
 		enemies[i].rect.width = (float)enemies[i].sprite.width;
 		enemies[i].collision = false;
 		enemies[i].dead = false;
-		enemies[i].enemyx = enemiespossiblepossitions[seq[i]].x;
-		enemies[i].enemyy = enemiespossiblepossitions[seq[i]].y;
+		enemies[i].enemyx = enemiespossiblepossitions[i].x;
+		enemies[i].enemyy = enemiespossiblepossitions[i].y;
 		enemies[i].vetor.x = (float)enemies[i].enemyx + enemies[i].sprite.width/2;
 		enemies[i].vetor.y = (float)enemies[i].enemyy + enemies[i].sprite.height/2;
 		enemies[i].explosioncheck = 0;
@@ -548,7 +583,6 @@ int main ()
 		enemies[i].explosionrect.y = 0.0f;
 		enemies[i].explosionrect.height = (float)explosion.height;
 		enemies[i].explosionrect.width = (float)explosion.width/16;
-		enemies[i].direction = 3;
 		enemies[i].exists = true;
 	}
 
@@ -565,8 +599,6 @@ int main ()
 	Vector2 mousebutn = {0.0f, 0.0f};
 
 	PlayMusicStream(startmusic);
-
-	enemies[0].exists = true;
 
 	// game loop
 	while (!exitWindow)		
@@ -656,7 +688,7 @@ int main ()
 					exitWindowRequested = true;
 					currentScreen = PAUSE;
 				}
-
+				
 
 	
 				scrollingback -= 0.1f;
@@ -675,35 +707,14 @@ int main ()
 
 				//collision
 				for (int i = 0; i < 7; i++){
-
+					// if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1)) currentScreen = DEAD;
 
 					
 					notelist[i].vect.x = (float)notelist[i].posnx + 32;
 					notelist[i].vect.y = (float)notelist[i].posny + 32;
 					enemies[i].collision = CheckCollisionCircles(notelist[i].vect, 25.0f,enemies[i].vetor, 25.0f);
 					notelist[i].collision = CheckCollisionCircles(notelist[i].vect, 25.0f, enemies[i].vetor,25.0f);
-					for (int j = 0; j < 8; j++){
-						for(int h = 0; h < 8; h++){
-							if(notelist[i].direct == 1){
-								if (CheckCollisionCircles((Vector2){notelist[i].vect.x + 16, notelist[i].vect.y + 16}, 20.0f, floor[j][h].position, 25.0f)) floor[j][h].isnotehere = true;
-								else floor[j][h].isnotehere = false;
-							} 
-							if(notelist[i].direct == 2){
-								if (CheckCollisionCircles((Vector2){notelist[i].vect.x + 16, notelist[i].vect.y - 16}, 20.0f, floor[j][h].position, 25.0f)) floor[j][h].isnotehere = true;
-								else floor[j][h].isnotehere = false;
-							} 
-							if(notelist[i].direct == 3){
-								if (CheckCollisionCircles((Vector2){notelist[i].vect.x - 16, notelist[i].vect.y + 16}, 20.0f, floor[j][h].position, 25.0f)) floor[j][h].isnotehere = true;
-								else floor[j][h].isnotehere = false;
-							} 
-							if(notelist[i].direct == 4){
-								if (CheckCollisionCircles((Vector2){notelist[i].vect.x - 16, notelist[i].vect.y - 16}, 20.0f, floor[j][h].position, 25.0f)) floor[j][h].isnotehere = true;
-								else floor[j][h].isnotehere = false;
-							} 
-							
-							
-						}
-					}
+					
 					if (notelist[i].collision) notelist[i].turnr = 0;
 					if (enemies[i].collision) enemies[i].dead = true;
 					if (enemies[i].dead) {
@@ -803,11 +814,12 @@ int main ()
 							turncom = turn;
 							StartTimer(&notetimer, notetimerduration);
 							shootmove(notelist);
-							
+							playeri++;
+							enemymovementlogic(enemies, floor);
 						} else {
 							dir = 1;
 						}
-						//logic_result = enemymovementlogic(enemies[0], floor);
+						
 					}
 					if(IsKeyPressed(KEY_UP)) {
 
@@ -818,6 +830,8 @@ int main ()
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
 							shootmove(notelist);
+							playeri--;
+							enemymovementlogic(enemies, floor);
 						} else {
 							dir = 4;
 						}
@@ -831,6 +845,8 @@ int main ()
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
 							shootmove(notelist);
+							playerj++;
+							enemymovementlogic(enemies, floor);
 						} else {
 							dir = 2;
 						}
@@ -844,6 +860,8 @@ int main ()
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
 							shootmove(notelist);
+							playerj--;
+							enemymovementlogic(enemies, floor);
 						} else {
 							dir = 3;
 						}
@@ -854,6 +872,7 @@ int main ()
 						notebeingshot = 0;
 						notemovement = 1;
 						playermovemet = 0;
+						
 						
 						if(notelist[notecheck].turnr == 0 || (notelist[notecheck].posnx > screenwidth) || (notelist[notecheck].posny > screenheight) || (notelist[notecheck].posnx < 0) || (notelist[notecheck].posny < 0)){ //turn - notelist[notecheck].turnr >= 3
 							turn++;
@@ -879,7 +898,7 @@ int main ()
 							notelist[notecheck].turnr = turn;
 							
 							PlaySound(notelist[notecheck].notesound);
-
+							enemymovementlogic(enemies, floor);
 							StartTimer(&turntimer,turnduration);
 							shootmove(notelist); 
 							turncom = turn;
@@ -1135,15 +1154,8 @@ int main ()
 
 				DrawCircle(positionballx,positionbally, 20, GRAY);
 
-				for (int i = 0; i < 8; i++){
-					for (int j = 0; j < 8; j++){
-						if (floor[i][j].isnotehere) DrawCircle(floor[i][j].position.x, floor[i][j].position.y, 25.0f, RED );
-					
-					}
-				}
-				// for (int i = 0; i < 7; i++){
-				// 	if (notelist[i].turnr != 0)DrawCircle(notelist[i].vect.x, notelist[i].vect.y, 25.0f, YELLOW);
-				// }
+				
+			
 				
 
 				

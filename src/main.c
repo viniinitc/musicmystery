@@ -15,7 +15,8 @@ typedef enum GameScreen {
 	CREDITS,
 	HIGHSCORE,
 	DEAD,
-	GAMEPLAY
+	GAMEPLAY,
+	TRANSITION,
 
 }GameScreen;
 
@@ -126,6 +127,7 @@ typedef struct{
 	float enemyx;
 	float enemyy;
 	int direction;
+	int movement[20];
 
 	int explosioncheck;
 	Vector2 explosionvect;
@@ -140,9 +142,10 @@ typedef struct{
 	bool collision;
 	bool dead;
 	bool canreach;
-	bool exists; // created this for the obstacle algorithm
+	bool exists; 
 	int i;
 	int j;
+	
 	
 
 }enemytype;
@@ -150,88 +153,41 @@ typedef struct{
 
 
 
-
-void enemymovementlogic(enemytype* enemy, squarefloor *floor){
-
-	int number;
-	int up = 0;
-	int down = 0;
-	int right = 0;
-	int left = 0;
-
-	squarefloor aux[8][8];
-
-	for (int i = 0; i < 8; i++){
-		for (int j = 0; j < 8; j++){
-			aux[i][j] = *(floor + (i*8) + j);
-		}
-	}
-
-	
-	
-	for (int h = 0; h < 7; h++){
-
-
-		int i = enemy[h].i;
-		int j = enemy[h].j;
-
-
-		// left = GetRandomValue(1, 10);
-		// right = GetRandomValue(0, 8);
-		// up = GetRandomValue(1, 8);
-		// down = GetRandomValue(1, 8);
-
-		if(j > 0 && !aux[i][j-1].isobstaclehere){
-			enemy[h].direction = 3;
-			enemy[h].j--;
-		}else if (i > 0 && !aux[i-1][j].isobstaclehere){
-			enemy[h].direction = 4;
-			enemy[h].i--;
-		}else if(i < 8-1 && !aux[i+1][j].isobstaclehere){
-			enemy[h].direction = 1;
-			enemy[h].i++;
-		}else if (j < 8-1 && !aux[i][j+1].isobstaclehere){
-			enemy[h].direction = 2;
-			enemy[h].j++;
-		}
-
-
-	}
-
-
-
-
-
-
-}
-
 void enemymovement(enemytype* enemy){
 
 	for (int i = 0; i < 7; i++){
-		if (enemy[i].direction == 1 && enemy[i].exists){
+		int move = 0;
+		if (enemy[i].direction == 1){
+			if (move == 1) (enemy[i].i++);
 			enemy[i].enemyx += 1.32;
 			enemy[i].enemyy += 0.825f;
 			enemy[i].vetor.x += 1.32;
 			enemy[i].vetor.y += 0.825;
-		} else if (enemy[i].direction == 3 && enemy[i].exists){
+			move++;
+		} else if (enemy[i].direction == 3){
+			if (move == 1) (enemy[i].j--);
 			enemy[i].enemyx -= 1.32;
 			enemy[i].enemyy += 0.825f;
 			enemy[i].vetor.x -= 1.32;
 			enemy[i].vetor.y += 0.825;
-		} else if (enemy[i].direction == 2 && enemy[i].exists){
+			move++;
+		} else if (enemy[i].direction == 2){
+			if (move == 1) (enemy[i].j++);
 			enemy[i].enemyx += 1.32;
 			enemy[i].enemyy -= 0.825f;
 			enemy[i].vetor.x += 1.32;
 			enemy[i].vetor.y -= 0.825;
-
-		} else if (enemy[i].direction == 4 && enemy[i].exists){
+			move++;
+		} else if (enemy[i].direction == 4){
+			if (move == 1) (enemy[i].i--);
 			enemy[i].enemyx -= 1.32;
 			enemy[i].enemyy -= 0.825f;
 			enemy[i].vetor.x -= 1.32;
 			enemy[i].vetor.y -= 0.825;
-
+			move++;
 		}
 	}
+
 }
 
 
@@ -258,6 +214,7 @@ int main ()
 	int notebeingshot = 0;
 	int notemovement = 0;
 	int enemymove = 1;
+	int enemymovementcounter = 0;
 
 
 
@@ -311,8 +268,10 @@ int main ()
 	notelist[6].notesound = LoadSound("Sichange.mp3");
 
 	Sound enemydeath = LoadSound("enemydeath.mp3");
+	Sound deadmusic = LoadSound("DEFEAT.mp3");
 
 	Music startmusic = LoadMusicStream("gamesong.mp3");
+	
 	// Load a texture from the resources directory
 	
 	
@@ -442,6 +401,12 @@ int main ()
 	int buttoncreditsstate = 0;
 	bool buttoncreditsactive = false;
 
+	Rectangle buttonexitboundnew = {screenwidth/2.0f - exitbutton.width/3/2.0f - ((exitbutton.width/3)-20) , screenheight/2.0f - exitbutton.height/2.0f + ((exitbutton.height+20)*3), (float)exitbutton.width/3, (float)exitbutton.height};
+	Rectangle buttonexitsourcenew = {0, 0, (float)exitbutton.width/3, (float)exitbutton.height};
+
+	Rectangle buttonmenuboundnew = {screenwidth/2.0f - menubutton.width/3/2.0f + ((menubutton.width/3)+20), screenheight/2.0f - exitbutton.height/2.0f + ((exitbutton.height+20)*3), (float)menubutton.width/3, (float)exitbutton.height};
+	Rectangle buttonmenusourcenew = {0, 0, (float)menubutton.width/3, (float)menubutton.height};
+
 	//buttons---------------------------------
 
 
@@ -473,7 +438,7 @@ int main ()
 		}
 	}
 
-	int map = GetRandomValue(1, 2);
+	int map = 1; //GetRandomValue(1, 2);
 
 	if (map == 1){
 		floor[0][2].isobstaclehere = true;
@@ -504,6 +469,8 @@ int main ()
 		floor[7][5].isobstaclehere = true;
 
 	}
+
+
 
 
 			
@@ -550,6 +517,49 @@ int main ()
 	enemies[6].i = 3;
 	enemies[6].j = 5;
 
+	for (int i = 0; i < 20; i++) {
+
+		int movem[] = {4, 3 ,3, 4, 4, 4, 2, 3, 4, 4, 3, 3, 3, 3, 4, 1, 4, 1, 4, 1};
+		enemies[0].movement[i] = movem[i];
+	}
+	
+	for (int i = 0; i < 20; i++) {
+
+		int movem[] = {4, 3 ,3, 3 ,4, 0, 4, 4, 3, 1, 3, 3, 3, 4, 0, 2, 3, 2, 3, 2};
+		enemies[1].movement[i] = movem[i];
+	}
+
+	for (int i = 0; i < 20; i++) {
+
+		int movem[] = {4, 4 ,4, 4, 4, 4, 3, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4};
+		enemies[2].movement[i] = movem[i];
+	}
+
+	for (int i = 0; i < 20; i++) {
+
+		int movem[] = {3, 4 ,2, 4, 4, 3, 3, 4, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2};
+		enemies[3].movement[i] = movem[i];
+	}
+
+	for (int i = 0; i < 20; i++) {
+
+		int movem[] = {1, 3 ,1, 4, 3, 3, 4, 3, 1, 3, 3, 4, 3, 3, 4, 3, 2, 3, 2, 3};
+		enemies[4].movement[i] = movem[i];
+	}
+
+	for (int i = 0; i < 20; i++) {
+
+		int movem[] = {4, 3 ,3, 4, 0, 4, 4, 0, 4, 4, 4, 3, 4, 1, 4, 1, 4, 1, 4};
+		enemies[5].movement[i] = movem[i];
+	}
+
+	for (int i = 0; i < 20; i++) {
+
+		int movem[] = {3, 3 ,1, 3, 3, 4, 4, 4, 4, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3};
+		enemies[6].movement[i] = movem[i];
+	}
+
+
 
 	
 	
@@ -557,6 +567,8 @@ int main ()
 
 
 	for (int i = 0; i < 7; i++){
+		int sure = enemies[i].movement[0];
+
 		notelist[i].typenote = i+1;
 		notelist[i].rect.height = (float)notelist[i].sprite.height;
 		notelist[i].rect.width = (float)notelist[i].sprite.width/16;
@@ -584,6 +596,7 @@ int main ()
 		enemies[i].explosionrect.height = (float)explosion.height;
 		enemies[i].explosionrect.width = (float)explosion.width/16;
 		enemies[i].exists = true;
+		enemies[i].direction = sure;
 	}
 
 
@@ -707,7 +720,14 @@ int main ()
 
 				//collision
 				for (int i = 0; i < 7; i++){
-					// if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1)) currentScreen = DEAD;
+					bool die = false;
+
+					die = CheckCollisionCircles(enemies[i].vetor, 25.0f, (Vector2){positionplayer.x+64,positionplayer.y+48}, 25.0f);
+
+					if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1) || die) {
+						PlaySound(deadmusic);
+						currentScreen = TRANSITION;
+					}
 
 					
 					notelist[i].vect.x = (float)notelist[i].posnx + 32;
@@ -720,6 +740,7 @@ int main ()
 					if (enemies[i].dead) {
 						enemies[i].explosioncheck++;
 						if (enemies[i].explosioncheck == 1){
+							playerpoint++;
 							enemies[i].explosionvect = enemies[i].vetor;
 							enemies[i].explosionvect.x -= 84;
 							enemies[i].explosionvect.y -= 94;
@@ -772,7 +793,7 @@ int main ()
 
 						if (enemies[i].currentExplosionFrame > 15) {
 							enemies[i].currentExplosionFrame = 15;
-							playerpoint ++;
+							
 						}
 
 						enemies[i].explosionrect.x = (float)enemies[i].currentExplosionFrame*(float)explosion.width/16;
@@ -806,16 +827,20 @@ int main ()
 					if(IsKeyPressed(KEY_DOWN)) {
 
 						
-						if (dir == 1) {	
+						if (dir == 1 && (playeri < 7) && !(floor[playeri+1][playerj].isobstaclehere)) {	
 							playermovemet = 1;
 							notebeingshot = 1;
+							
 							turn++;
 							StartTimer(&turntimer,turnduration);
 							turncom = turn;
 							StartTimer(&notetimer, notetimerduration);
 							shootmove(notelist);
 							playeri++;
-							enemymovementlogic(enemies, floor);
+
+							for(int i = 0; i < 7; i++) enemies[i].direction = enemies[i].movement[enemymovementcounter];
+							enemymovementcounter++;
+							
 						} else {
 							dir = 1;
 						}
@@ -823,7 +848,7 @@ int main ()
 					}
 					if(IsKeyPressed(KEY_UP)) {
 
-						if (dir == 4){
+						if (dir == 4 && playeri > 0 && !(floor[playeri-1][playerj].isobstaclehere)){
 							playermovemet = 1;
 							notebeingshot = 1;
 							turn++;
@@ -831,14 +856,17 @@ int main ()
 							turncom = turn;
 							shootmove(notelist);
 							playeri--;
-							enemymovementlogic(enemies, floor);
+							
+							for(int i = 0; i < 7; i++) enemies[i].direction = enemies[i].movement[enemymovementcounter];
+							enemymovementcounter++;
+
 						} else {
 							dir = 4;
 						}
 					}
 					if(IsKeyPressed(KEY_RIGHT)) {
 						
-						if (dir == 2){
+						if (dir == 2 && playerj < 7 && !(floor[playeri][playerj+1].isobstaclehere)){
 							playermovemet = 1;
 							notebeingshot = 1;
 							turn++;
@@ -846,14 +874,17 @@ int main ()
 							turncom = turn;
 							shootmove(notelist);
 							playerj++;
-							enemymovementlogic(enemies, floor);
+
+							for(int i = 0; i < 7; i++) enemies[i].direction = enemies[i].movement[enemymovementcounter];
+							enemymovementcounter++;
+							
 						} else {
 							dir = 2;
 						}
 					}
 					if(IsKeyPressed(KEY_LEFT)) {
 
-						if (dir == 3){
+						if (dir == 3 && playerj > 0 && !(floor[playeri][playerj-1].isobstaclehere)){
 							playermovemet = 1;
 							notebeingshot = 1;
 							turn++;
@@ -861,7 +892,10 @@ int main ()
 							turncom = turn;
 							shootmove(notelist);
 							playerj--;
-							enemymovementlogic(enemies, floor);
+
+							for(int i = 0; i < 7; i++) enemies[i].direction = enemies[i].movement[enemymovementcounter];
+							enemymovementcounter++;
+							
 						} else {
 							dir = 3;
 						}
@@ -898,10 +932,13 @@ int main ()
 							notelist[notecheck].turnr = turn;
 							
 							PlaySound(notelist[notecheck].notesound);
-							enemymovementlogic(enemies, floor);
+							
 							StartTimer(&turntimer,turnduration);
 							shootmove(notelist); 
 							turncom = turn;
+
+							for(int i = 0; i < 7; i++) enemies[i].direction = enemies[i].movement[enemymovementcounter];
+							enemymovementcounter++;
 						}
 
 					}
@@ -1042,6 +1079,53 @@ int main ()
 
 			case DEAD:{
 
+
+				mousebutn = GetMousePosition();
+
+				buttonmenuactive = false;
+
+				buttonexitactive = false;
+
+
+				
+
+
+				if (CheckCollisionPointRec(mousebutn, buttonexitboundnew)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonexitstate = 2;
+					else buttonexitstate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonexitactive = true;
+				} else buttonexitstate = 0;
+
+				buttonexitsourcenew.x = (float)(buttonexitstate*(exitbutton.width/3));
+
+				if (buttonexitactive)exitWindow = true;
+
+				if (CheckCollisionPointRec(mousebutn, buttonmenuboundnew)) {
+					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonmenustate = 2;
+					else buttonmenustate = 1;
+
+					if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) buttonmenuactive = true;
+				} else buttonmenustate = 0;
+
+				buttonmenusourcenew.x = (float)(buttonmenustate*(menubutton.width/3));
+
+				if (buttonmenuactive) {
+					currentScreen = STARTSCREEN;
+					restart = 1;
+				}
+
+			}break;
+
+			case TRANSITION:{
+				
+
+				framesCounter++;
+
+				if (framesCounter > 120){
+					currentScreen = DEAD;
+					framecounter = 0;
+				}
 			}break;
 
 			case CREDITS:{
@@ -1111,7 +1195,11 @@ int main ()
 				DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
 				DrawTexture(playersoul, soulposx, soulposy, WHITE);
 
-
+				for (int i = 0; i < 8; i++){
+					for (int j = 0; j < 8; j++){
+						if(floor[i][j].isobstaclehere) DrawCircle((int)floor[i][j].position.x,(int)floor[i][j].position.y, 20, RED);
+					}
+				}
 
 
 				for (int i = 0; i < 7; i++){
@@ -1195,6 +1283,107 @@ int main ()
 			}break;
 
 			case DEAD:{
+
+				DrawRectangle(0, 0, screenwidth, screenheight,WHITE);
+
+				if (!IsSoundPlaying(deadmusic)){
+					DrawText("You lose", screenwidth/3,screenheight/3,20, BLACK);
+					DrawText(TextFormat("you killed a total of %d enemies",playerpoint),screenwidth/2, screenheight/2,20,BLACK);
+
+					DrawTextureRec(menubutton, buttonmenusourcenew, (Vector2){ buttonmenuboundnew.x, buttonexitboundnew.y}, WHITE);
+
+					DrawTextureRec(exitbutton, buttonexitsourcenew, (Vector2){ buttonexitboundnew.x, buttonexitboundnew.y}, WHITE);
+				}
+
+
+
+			}break;
+
+			case TRANSITION:{
+
+				DrawTextureEx(background1, (Vector2){ scrollingback, 20 }, 0.0f, 2.0f, WHITE);
+				DrawTextureEx(background1, (Vector2){ background1.width + scrollingback, 20 }, 0.0f, 2.0f, WHITE);
+
+				DrawTextureEx(background2, (Vector2){ scrollingmid, 20 }, 0.0f, 2.0f, WHITE);
+				DrawTextureEx(background2, (Vector2){ background2.width + scrollingmid, 20 }, 0.0f, 2.0f, WHITE);
+
+
+				DrawTextureEx(background3, (Vector2){ scrollingfore, 70 }, 0.0f, 2.0f, WHITE);
+				DrawTextureEx(background3, (Vector2){ background3.width + scrollingfore, 70 }, 0.0f, 2.0f, WHITE);
+
+
+
+				//create if statements so things only get drawn when i need them
+				for (int i = 0; i < 7; i++){
+					notelist[i].vect.x = notelist[i].posnx;
+					notelist[i].vect.y = notelist[i].posny;
+				}
+				
+				DrawTexture(floortest1, 20, 40, WHITE);
+				DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
+				DrawTexture(playersoul, soulposx, soulposy, WHITE);
+
+				for (int i = 0; i < 8; i++){
+					for (int j = 0; j < 8; j++){
+						if(floor[i][j].isobstaclehere) DrawCircle((int)floor[i][j].position.x,(int)floor[i][j].position.y, 20, RED);
+					}
+				}
+
+
+				for (int i = 0; i < 7; i++){
+					if (notelist[i].turnr > 0  && !notelist[i].collision) DrawTextureRec(notelist[i].sprite, notelist[i].rect,notelist[i].vect, WHITE);
+					//if (notelist[i].turnr > 0) DrawCircle(notelist[i].vect.x + 32,notelist[i].vect.y + 32, 20.0f, BLUE);
+				}
+				
+
+			
+				//temporary mouse text so i can figure out positions
+				DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
+						Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
+
+
+				for (int i = 0; i < 7; i++){
+					
+					if(!enemies[i].dead && enemies[i].exists)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
+					if (enemies[i].dead)DrawTextureRec(explosion, enemies[i].explosionrect, enemies[i].explosionvect , WHITE);
+					
+					if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
+				}
+
+				//DrawTexture(obstacle, 409, 395, WHITE);
+
+
+				if (dir == 1 && !playermovemet) DrawTextureRec(playersprite1, frameRecplayer, positionplayer, WHITE);
+				if (dir == 3 && !playermovemet) DrawTextureRec(playersprite2, frameRecplayer, positionplayer, WHITE);
+				if (dir == 2 && !playermovemet) DrawTexture(playersprite3, positionplayer.x, positionplayer.y, WHITE);
+				if (dir == 4 && !playermovemet) DrawTexture(playersprite4, positionplayer.x, positionplayer.y, WHITE);
+				if (dir == 1 && playermovemet) DrawTextureRec(playerjumpdown, playerjumprectdown, positionplayer, WHITE);
+				if (dir == 4 && playermovemet) DrawTextureRec(playerjumpup, playerjumprectup, positionplayer, WHITE);
+				if (dir == 2 && playermovemet) DrawTextureRec(playerjumpright, playerjumprectright, positionplayer, WHITE);
+				if (dir == 3 && playermovemet) DrawTextureRec(playerjumpleft, playerjumprectleft, positionplayer, WHITE);
+
+
+				if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
+				if (collisionball2) DrawText("2", 100, 100, 100, BLACK);
+				if (collisionball3) DrawText("3", 100, 100, 100, BLACK);
+				if (collisionball4) DrawText("4", 100, 100, 100, BLACK);
+
+				DrawCircle(positionballx,positionbally, 20, GRAY);
+
+				
+			
+				
+
+				
+				for (int i = 0; i < 7; i++){
+					if (i == notecheck) DrawRectangle(30 + 71*i, 800, 70, 70, RED);
+					DrawTexture(notenoan[i], 30 + 71*i, 803, WHITE);
+					DrawRectangleLines(30 + 71*i, 800, 70, 70, MAROON);
+				}
+
+
+
+				DrawRectangle(0, 0, screenwidth, screenheight,CLITERAL(Color){255,255,255, framesCounter*2});
 
 			}break;
 			default: break;

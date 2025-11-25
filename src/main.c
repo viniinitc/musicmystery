@@ -190,6 +190,24 @@ void enemymovement(enemytype* enemy){
 
 }
 
+int gethighscore(FILE* x){
+
+    
+    int a, b;
+    int turn;
+    
+    fscanf(x,"%d",&turn);
+    fscanf(x,"%d",&a);
+
+    if (feof(x) != 0) return a;
+    else {
+        b = gethighscore(x);
+        if (b <= a) return a;
+        else return b;
+    }
+}
+
+
 
 
 
@@ -200,6 +218,8 @@ int main ()
 
 	buttontype currentbutton;
 
+	int highscore = 0;
+	int highscoreenable = 0;
 
 	int framecounter = 0;
 
@@ -640,6 +660,8 @@ int main ()
 				buttoncreditsactive = false;
 				buttonexitactive = false;
 
+				if (IsKeyReleased(KEY_SPACE)) currentScreen = HIGHSCORE;
+
 				if (CheckCollisionPointRec(mousebutn, buttonstorybound)) {
 					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonstorystate = 2;
 					else buttonstorystate = 1;
@@ -857,6 +879,7 @@ int main ()
 				//collision
 				for (int i = 0; i < 7; i++){
 					
+					
 
 					die = CheckCollisionCircles(enemies[i].vetor, 25.0f, (Vector2){positionplayer.x+64,positionplayer.y+48}, 25.0f);
 
@@ -876,6 +899,7 @@ int main ()
 					if (enemies[i].dead) {
 						enemies[i].explosioncheck++;
 						if (enemies[i].explosioncheck == 1){
+							continuing++;
 							playerpoint++;
 							enemies[i].explosionvect = enemies[i].vetor;
 							enemies[i].explosionvect.x -= 84;
@@ -959,8 +983,10 @@ int main ()
 
 				
 				//remember to update player movement 
-				if (TimerDone(&turntimer) && (currentplayerjumpframe == 0 || currentplayerjumpframe == 15)){
+				if (TimerDone(&turntimer)){
+					enemymove = 1;
 					if(IsKeyPressed(KEY_DOWN)) {
+
 
 						
 						if (dir == 1 && (playeri < 7) && !(floor[playeri+1][playerj].isobstaclehere)) {	
@@ -1152,9 +1178,9 @@ int main ()
 
 				}
 
+				if (playeri == 7 && playerj == 7) continuing = 8;
 				
-
-
+				if (continuing == 8) currentScreen = TRANSITION;
 
 				UpdateTimer(&turntimer);
 
@@ -1218,7 +1244,7 @@ int main ()
 
 			case DEAD:{
 
-				cont++;
+				
 
 				FILE* X;
 
@@ -1231,18 +1257,7 @@ int main ()
 
 				restart = 1;
 
-				if (cont == 1){
-					X = fopen("SCORES.txt", "a+");
-					if (X == NULL){
-						
-
-					} else {
-						fprintf(X,"%d\n",turn);
-						fprintf(X,"%d\n",playerpoint);
-
-					}
-					
-				}
+				
 				
 
 				if (CheckCollisionPointRec(mousebutn, buttonexitboundnew)) {
@@ -1254,7 +1269,19 @@ int main ()
 
 				buttonexitsourcenew.x = (float)(buttonexitstate*(exitbutton.width/3));
 
-				if (buttonexitactive)exitWindow = true;
+				if (buttonexitactive){
+
+					X = fopen("SCORES.txt", "a+");
+					if (X == NULL){
+						
+
+					} else {
+						fprintf(X,"\n%d %d",turn, playerpoint);
+					}
+					fclose(X);
+
+					exitWindow = true;
+				}
 
 				if (CheckCollisionPointRec(mousebutn, buttonmenuboundnew)) {
 					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonmenustate = 2;
@@ -1266,10 +1293,21 @@ int main ()
 				buttonmenusourcenew.x = (float)(buttonmenustate*(menubutton.width/3));
 
 				if (buttonmenuactive) {
+					
+					X = fopen("SCORES.txt", "a+");
+					if (X == NULL){
+						
+
+					} else {
+						fprintf(X,"\n%d %d",turn, playerpoint);
+					}
+					fclose(X);
+
 					currentScreen = STARTSCREEN;
 					
 				}
 
+				
 			}break;
 
 			case TRANSITION:{
@@ -1278,8 +1316,81 @@ int main ()
 				framesCounter++;
 
 				if (framesCounter > 120){
-					currentScreen = DEAD;
 					framecounter = 0;
+					if (continuing != 8){
+						currentScreen = DEAD;
+					} else {
+						if (continuing == 8){
+
+							position.x = 350.0f;
+							position.y = 280.0f;
+							positionplayer.x = 30.0f, 
+							positionplayer.y = 327.0f;
+
+							enemymovementcounter = 0;
+							
+							playermovemet = 0;
+							notebeingshot = 0;
+							notemovement = 0;
+							enemymove = 0;
+
+
+							exitladderx = 1160;
+							exitladdery = 180;
+							posx=64;
+							posy=640;
+							firstblockx = 48;
+							firstblocky = 708;
+
+							dir = 1;
+							currentplayerjumpframe = 0;
+
+							playeri = 0;
+							playerj = 0;
+							
+
+							notecheck = 0;
+							cont = 0;
+							explosioncheck = 0;
+							
+
+							for (int i = 0; i < 7; i++){
+								int sure = enemies[i].movement[0];
+
+								notelist[i].typenote = i+1;
+								notelist[i].rect.height = (float)notelist[i].sprite.height;
+								notelist[i].rect.width = (float)notelist[i].sprite.width/16;
+								notelist[i].rect.x = 0.0f;
+								notelist[i].rect.y = 0.0f;
+								notelist[i].turnr = 0;
+								notelist[i].collision = false;
+								enemies[i].type = i+1;
+								enemies[i].hp = 1;
+								enemies[i].rect.x = 0.0f;
+								enemies[i].rect.y = 0.0f;
+								enemies[i].rect.height = (float)enemies[i].sprite.height;
+								enemies[i].rect.width = (float)enemies[i].sprite.width;
+								enemies[i].collision = false;
+								enemies[i].dead = false;
+								enemies[i].enemyx = enemiespossiblepossitions[i].x;
+								enemies[i].enemyy = enemiespossiblepossitions[i].y;
+								enemies[i].vetor.x = (float)enemies[i].enemyx + enemies[i].sprite.width/2;
+								enemies[i].vetor.y = (float)enemies[i].enemyy + enemies[i].sprite.height/2;
+								enemies[i].explosioncheck = 0;
+								enemies[i].framesExplosionCounter = 0;
+								enemies[i].currentExplosionFrame = 0;
+								enemies[i].explosionrect.x = 0.0f;
+								enemies[i].explosionrect.y = 0.0f;
+								enemies[i].explosionrect.height = (float)explosion.height;
+								enemies[i].explosionrect.width = (float)explosion.width/16;
+								enemies[i].exists = true;
+								enemies[i].direction = sure;
+							}
+						}
+						continuing = 0;
+						currentScreen = GAMEPLAY;
+					}
+					
 				}
 			}break;
 
@@ -1290,6 +1401,17 @@ int main ()
 
 			case HIGHSCORE:{
 
+				highscoreenable ++;
+				UpdateMusicStream(startmusic);
+				if (IsKeyPressed(KEY_ESCAPE)) currentScreen = STARTSCREEN;
+				FILE* X;
+				
+				if (highscoreenable == 1){
+					X = fopen("SCORES.txt", "r");
+					if (X != NULL) highscore = gethighscore(X);
+					fclose(X);
+				}
+				
 			}break;
 			default: break;
 		}
@@ -1433,11 +1555,13 @@ int main ()
 
 			case HIGHSCORE:{
 
+				FILE* X;
+
 				DrawRectangle(0, 0, screenwidth, screenheight, BLACK);
-				
-				
 
+				DrawText(TextFormat("Highest score %d", highscore),600, 400, 30, WHITE);
 
+				
 			}break;
 
 			case DEAD:{

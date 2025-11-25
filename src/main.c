@@ -209,6 +209,7 @@ int main ()
 	for (int i = 0; i < 8; i++) floor[i] = (squarefloor*)malloc(8 * sizeof(squarefloor));
 
 	int restart = 0;
+	int continuing = 0;
 
 	int playermovemet = 0;
 	int notebeingshot = 0;
@@ -227,7 +228,6 @@ int main ()
 
 	int dir = 1;
 
-	int playerhp = 3;
 	int playeri = 0;
 	int playerj = 0;
 	int turn = 0;
@@ -649,8 +649,76 @@ int main ()
 
 				buttonstorysource.x = (float)(buttonstorystate*(storybutton.width/3));
 
-				if (buttonstoryactive) currentScreen = GAMEPLAY;
+				if (buttonstoryactive) {
+					currentScreen = GAMEPLAY;
+					if (restart == 1){
 
+						position.x = 350.0f;
+						position.y = 280.0f;
+						positionplayer.x = 30.0f, 
+						positionplayer.y = 327.0f;
+
+						enemymovementcounter = 0;
+						playerpoint = 0;
+						playermovemet = 0;
+						notebeingshot = 0;
+						notemovement = 0;
+						enemymove = 1;
+
+
+						exitladderx = 1160;
+						exitladdery = 180;
+						posx=64;
+						posy=640;
+						firstblockx = 48;
+						firstblocky = 708;
+
+						dir = 1;
+						currentplayerjumpframe = 0;
+
+						playeri = 0;
+						playerj = 0;
+						turn = 0;
+
+						notecheck = 0;
+						cont = 0;
+						explosioncheck = 0;
+						playerpoint = 0;
+
+						for (int i = 0; i < 7; i++){
+							int sure = enemies[i].movement[0];
+
+							notelist[i].typenote = i+1;
+							notelist[i].rect.height = (float)notelist[i].sprite.height;
+							notelist[i].rect.width = (float)notelist[i].sprite.width/16;
+							notelist[i].rect.x = 0.0f;
+							notelist[i].rect.y = 0.0f;
+							notelist[i].turnr = 0;
+							notelist[i].collision = false;
+							enemies[i].type = i+1;
+							enemies[i].hp = 1;
+							enemies[i].rect.x = 0.0f;
+							enemies[i].rect.y = 0.0f;
+							enemies[i].rect.height = (float)enemies[i].sprite.height;
+							enemies[i].rect.width = (float)enemies[i].sprite.width;
+							enemies[i].collision = false;
+							enemies[i].dead = false;
+							enemies[i].enemyx = enemiespossiblepossitions[i].x;
+							enemies[i].enemyy = enemiespossiblepossitions[i].y;
+							enemies[i].vetor.x = (float)enemies[i].enemyx + enemies[i].sprite.width/2;
+							enemies[i].vetor.y = (float)enemies[i].enemyy + enemies[i].sprite.height/2;
+							enemies[i].explosioncheck = 0;
+							enemies[i].framesExplosionCounter = 0;
+							enemies[i].currentExplosionFrame = 0;
+							enemies[i].explosionrect.x = 0.0f;
+							enemies[i].explosionrect.y = 0.0f;
+							enemies[i].explosionrect.height = (float)explosion.height;
+							enemies[i].explosionrect.width = (float)explosion.width/16;
+							enemies[i].exists = true;
+							enemies[i].direction = sure;
+						}
+					}
+				}
 
 
 				if (CheckCollisionPointRec(mousebutn, buttonendlessbound)) {
@@ -662,8 +730,76 @@ int main ()
 
 				buttonendlesssource.x = (float)(buttonendlessstate*(endlessbutton.width/3));
 
-				if (buttonendlessactive) currentScreen = GAMEPLAY;
+				if (buttonendlessactive) {
+					currentScreen = GAMEPLAY;
+					if (restart == 1){
 
+						position.x = 350.0f;
+						position.y = 280.0f;
+						positionplayer.x = 30.0f, 
+						positionplayer.y = 327.0f;
+
+						enemymovementcounter = 0;
+						playerpoint = 0;
+						playermovemet = 0;
+						notebeingshot = 0;
+						notemovement = 0;
+						enemymove = 1;
+
+
+						exitladderx = 1160;
+						exitladdery = 180;
+						posx=64;
+						posy=640;
+						firstblockx = 48;
+						firstblocky = 708;
+
+						dir = 1;
+						currentplayerjumpframe = 0;
+
+						playeri = 0;
+						playerj = 0;
+						turn = 0;
+
+						notecheck = 0;
+						cont = 0;
+						explosioncheck = 0;
+						playerpoint = 0;
+
+						for (int i = 0; i < 7; i++){
+							int sure = enemies[i].movement[0];
+
+							notelist[i].typenote = i+1;
+							notelist[i].rect.height = (float)notelist[i].sprite.height;
+							notelist[i].rect.width = (float)notelist[i].sprite.width/16;
+							notelist[i].rect.x = 0.0f;
+							notelist[i].rect.y = 0.0f;
+							notelist[i].turnr = 0;
+							notelist[i].collision = false;
+							enemies[i].type = i+1;
+							enemies[i].hp = 1;
+							enemies[i].rect.x = 0.0f;
+							enemies[i].rect.y = 0.0f;
+							enemies[i].rect.height = (float)enemies[i].sprite.height;
+							enemies[i].rect.width = (float)enemies[i].sprite.width;
+							enemies[i].collision = false;
+							enemies[i].dead = false;
+							enemies[i].enemyx = enemiespossiblepossitions[i].x;
+							enemies[i].enemyy = enemiespossiblepossitions[i].y;
+							enemies[i].vetor.x = (float)enemies[i].enemyx + enemies[i].sprite.width/2;
+							enemies[i].vetor.y = (float)enemies[i].enemyy + enemies[i].sprite.height/2;
+							enemies[i].explosioncheck = 0;
+							enemies[i].framesExplosionCounter = 0;
+							enemies[i].currentExplosionFrame = 0;
+							enemies[i].explosionrect.x = 0.0f;
+							enemies[i].explosionrect.y = 0.0f;
+							enemies[i].explosionrect.height = (float)explosion.height;
+							enemies[i].explosionrect.width = (float)explosion.width/16;
+							enemies[i].exists = true;
+							enemies[i].direction = sure;
+						}
+					}
+				}
 
 
 				if (CheckCollisionPointRec(mousebutn, buttoncreditsbound)) {
@@ -703,7 +839,7 @@ int main ()
 				}
 				
 
-	
+				bool die = false;
 				scrollingback -= 0.1f;
 				scrollingmid -= 0.5f;
 				scrollingfore -= 1.0f;
@@ -720,13 +856,13 @@ int main ()
 
 				//collision
 				for (int i = 0; i < 7; i++){
-					bool die = false;
+					
 
 					die = CheckCollisionCircles(enemies[i].vetor, 25.0f, (Vector2){positionplayer.x+64,positionplayer.y+48}, 25.0f);
 
 					if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1) || die) {
 						PlaySound(deadmusic);
-						currentScreen = TRANSITION;
+						if (TimerDone(&turntimer)) currentScreen = TRANSITION;
 					}
 
 					
@@ -1016,6 +1152,8 @@ int main ()
 
 				}
 
+				
+
 
 
 				UpdateTimer(&turntimer);
@@ -1069,8 +1207,9 @@ int main ()
 				buttonmenusource.x = (float)(buttonmenustate*(menubutton.width/3));
 
 				if (buttonmenuactive) {
-					currentScreen = STARTSCREEN;
 					restart = 1;
+					currentScreen = STARTSCREEN;
+					
 				}
 
 
@@ -1079,6 +1218,9 @@ int main ()
 
 			case DEAD:{
 
+				cont++;
+
+				FILE* X;
 
 				mousebutn = GetMousePosition();
 
@@ -1087,8 +1229,21 @@ int main ()
 				buttonexitactive = false;
 
 
-				
+				restart = 1;
 
+				if (cont == 1){
+					X = fopen("SCORES.txt", "a+");
+					if (X == NULL){
+						
+
+					} else {
+						fprintf(X,"%d\n",turn);
+						fprintf(X,"%d\n",playerpoint);
+
+					}
+					
+				}
+				
 
 				if (CheckCollisionPointRec(mousebutn, buttonexitboundnew)) {
 					if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) buttonexitstate = 2;
@@ -1112,7 +1267,7 @@ int main ()
 
 				if (buttonmenuactive) {
 					currentScreen = STARTSCREEN;
-					restart = 1;
+					
 				}
 
 			}break;
@@ -1157,8 +1312,6 @@ int main ()
 
 			case STARTSCREEN:{
 				DrawRectangle(0, 0,	screenwidth, screenheight, GREEN);
-                DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
-                DrawText("PRESS SPACEo to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
 
 				DrawTextureRec(storybutton, buttonstorysource, (Vector2){ buttonstorybound.x, buttonstorybound.y }, WHITE);
 
@@ -1280,6 +1433,11 @@ int main ()
 
 			case HIGHSCORE:{
 
+				DrawRectangle(0, 0, screenwidth, screenheight, BLACK);
+				
+				
+
+
 			}break;
 
 			case DEAD:{
@@ -1288,8 +1446,8 @@ int main ()
 
 				if (!IsSoundPlaying(deadmusic)){
 					DrawText("You lose", screenwidth/3,screenheight/3,20, BLACK);
-					DrawText(TextFormat("you killed a total of %d enemies",playerpoint),screenwidth/2, screenheight/2,20,BLACK);
-
+					DrawText(TextFormat("you killed a total of %d enemies",playerpoint),screenwidth/2 - 100, screenheight/2,20,BLACK);
+					DrawText(TextFormat("you survived for %d turns in total",turn),screenwidth/2 - 100, screenheight/2 + 30,20,BLACK);
 					DrawTextureRec(menubutton, buttonmenusourcenew, (Vector2){ buttonmenuboundnew.x, buttonexitboundnew.y}, WHITE);
 
 					DrawTextureRec(exitbutton, buttonexitsourcenew, (Vector2){ buttonexitboundnew.x, buttonexitboundnew.y}, WHITE);

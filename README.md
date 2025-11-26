@@ -49,18 +49,13 @@
    cd bin/Debug/
    ./musicmystery
 
-
-
-Caso ocorra algum problema, consulte a documentação da Raylib para Linux: [Raylib para Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
+If you have any problems consult the Raylib documation for linux: [Raylib para Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
 
 
 ---
 
 ## 📜 Main menu
 
-A tela de menu oferece as seguintes opções:
-
-![Menu](assets\img\menujogo.png)
 
 - 🟡 **Endless**: To start the game.
 - 🏆 **Highscore**: To check your highest score.
@@ -74,10 +69,10 @@ A tela de menu oferece as seguintes opções:
 ### Keybinds:
 
 - Use the arrow keys to control the player:
-  - **W** — To go left downwards
-  - **A** — To go right downwards
-  - **D** — To go right upwards
-  - **L** — To go left upwards
+  - **Arrow Left** — To go left downwards
+  - **Arrow Down** — To go right downwards
+  - **Arrow Right** — To go right upwards
+  - **Arrow Up** — To go left upwards
   - **Space** — To shoot
   - **1** — To switch between notes
   - **Esc** — To pause
@@ -87,7 +82,7 @@ A tela de menu oferece as seguintes opções:
 
 ## 🎬 Demonstring how to execute the game
 
-[![Assista ao vídeo no YouTube](https://img.youtube.com/vi/CFFP_qnYuyY/maxresdefault.jpg)](https://youtu.be/CFFP_qnYuyY)
+[[Youtube Video]](https://youtu.be/CFFP_qnYuyY)
 
 ---
 
@@ -107,7 +102,7 @@ A tela de menu oferece as seguintes opções:
 
 ## 📊 Presentation
 
-[Veja os slides no Canva.](https://www.canva.com/design/DAGoTto-qis/6Rn61_Hm-M_6Z0kySZ2rDg/view?utm_content=DAGoTto-qis&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+[Check the slides.](https://www.canva.com/design/DAG5zhs3JY4/laWw1Y52baS1tvg_ClAw2w/edit?utm_content=DAG5zhs3JY4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 
 ## 👥 Developer

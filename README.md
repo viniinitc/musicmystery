@@ -45,10 +45,9 @@
    make
 
 8. Run the game:
-
+   ```
    cd bin/Debug/
    ./musicmystery
-   ```
 
 
 

@@ -46,6 +46,7 @@ typedef struct squarefloor{
 typedef struct enemymov{
 
 	int number;
+	int enemytype;
 	struct enemymov* next;
 
 }enemymov;
@@ -158,6 +159,20 @@ typedef struct{
 }enemytype;
 
 
+void createnextoflist(enemymov** head, int i, int j){
+
+	enemymov* n = *head;
+
+	while(n->next != NULL) n = n->next;
+
+	n->next = (enemymov*)malloc(sizeof(enemymov));
+	n = n->next;
+	n->number = i;
+	n->enemytype = j;
+	n->next = NULL;
+	
+}
+
 
 
 void enemymovement(enemytype* enemy){
@@ -226,6 +241,10 @@ int main ()
 	GameScreen currentScreen = LOGO;
 
 	buttontype currentbutton;
+
+	enemymov* listhead = (enemymov*)malloc(sizeof(enemymov));
+	listhead->next = NULL;
+	enemymov* listaux = listhead;
 
 	int highscore = 0;
 	int highscoreenable = 0;

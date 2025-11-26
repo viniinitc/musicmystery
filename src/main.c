@@ -43,6 +43,13 @@ typedef struct squarefloor{
 
 }squarefloor;
 
+typedef struct enemymov{
+
+	int number;
+	struct enemymov* next;
+
+}enemymov;
+
 
 
 
@@ -190,6 +197,8 @@ void enemymovement(enemytype* enemy){
 
 }
 
+
+
 int gethighscore(FILE* x){
 
     
@@ -327,7 +336,7 @@ int main ()
 	Texture obstacle = LoadTexture("obstacles.png");
 	Texture exitladder = LoadTexture("ladder.png");
 	Texture2D explosion = LoadTexture("explosion.png");
-	Texture2D floortest1 = LoadTexture("floor1.png");
+	Texture2D floortest1 = LoadTexture("floor1new.png");
 
 
 	Texture playersoul = LoadTexture("playersoul.png");
@@ -345,8 +354,8 @@ int main ()
 	Texture mylogo = LoadTexture("logo.png");
 
 
-	Texture2D storybutton = LoadTexture("buttonstory.png");
-	Texture2D endlessbutton = LoadTexture("buttonendless.png");
+	Texture2D storybutton = LoadTexture("buttonendless.png");
+	Texture2D endlessbutton = LoadTexture("buttonhighscore.png");
 	Texture2D continuebutton = LoadTexture("buttoncontinue.png");
 	Texture2D exitbutton = LoadTexture("buttonexit.png");
 	Texture2D restartbutton = LoadTexture("buttonrestart.png");
@@ -753,74 +762,7 @@ int main ()
 				buttonendlesssource.x = (float)(buttonendlessstate*(endlessbutton.width/3));
 
 				if (buttonendlessactive) {
-					currentScreen = GAMEPLAY;
-					if (restart == 1){
-
-						position.x = 350.0f;
-						position.y = 280.0f;
-						positionplayer.x = 30.0f, 
-						positionplayer.y = 327.0f;
-
-						enemymovementcounter = 0;
-						playerpoint = 0;
-						playermovemet = 0;
-						notebeingshot = 0;
-						notemovement = 0;
-						enemymove = 1;
-
-
-						exitladderx = 1160;
-						exitladdery = 180;
-						posx=64;
-						posy=640;
-						firstblockx = 48;
-						firstblocky = 708;
-
-						dir = 1;
-						currentplayerjumpframe = 0;
-
-						playeri = 0;
-						playerj = 0;
-						turn = 0;
-
-						notecheck = 0;
-						cont = 0;
-						explosioncheck = 0;
-						playerpoint = 0;
-
-						for (int i = 0; i < 7; i++){
-							int sure = enemies[i].movement[0];
-
-							notelist[i].typenote = i+1;
-							notelist[i].rect.height = (float)notelist[i].sprite.height;
-							notelist[i].rect.width = (float)notelist[i].sprite.width/16;
-							notelist[i].rect.x = 0.0f;
-							notelist[i].rect.y = 0.0f;
-							notelist[i].turnr = 0;
-							notelist[i].collision = false;
-							enemies[i].type = i+1;
-							enemies[i].hp = 1;
-							enemies[i].rect.x = 0.0f;
-							enemies[i].rect.y = 0.0f;
-							enemies[i].rect.height = (float)enemies[i].sprite.height;
-							enemies[i].rect.width = (float)enemies[i].sprite.width;
-							enemies[i].collision = false;
-							enemies[i].dead = false;
-							enemies[i].enemyx = enemiespossiblepossitions[i].x;
-							enemies[i].enemyy = enemiespossiblepossitions[i].y;
-							enemies[i].vetor.x = (float)enemies[i].enemyx + enemies[i].sprite.width/2;
-							enemies[i].vetor.y = (float)enemies[i].enemyy + enemies[i].sprite.height/2;
-							enemies[i].explosioncheck = 0;
-							enemies[i].framesExplosionCounter = 0;
-							enemies[i].currentExplosionFrame = 0;
-							enemies[i].explosionrect.x = 0.0f;
-							enemies[i].explosionrect.y = 0.0f;
-							enemies[i].explosionrect.height = (float)explosion.height;
-							enemies[i].explosionrect.width = (float)explosion.width/16;
-							enemies[i].exists = true;
-							enemies[i].direction = sure;
-						}
-					}
+					currentScreen = HIGHSCORE;
 				}
 
 
@@ -881,7 +823,7 @@ int main ()
 					
 					
 
-					die = CheckCollisionCircles(enemies[i].vetor, 25.0f, (Vector2){positionplayer.x+64,positionplayer.y+48}, 25.0f);
+					die = CheckCollisionCircles(enemies[i].vetor, 30.0f, (Vector2){positionplayer.x+64,positionplayer.y+48}, 30.0f);
 
 					if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1) || die) {
 						PlaySound(deadmusic);
@@ -1470,11 +1412,6 @@ int main ()
 				DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
 				DrawTexture(playersoul, soulposx, soulposy, WHITE);
 
-				for (int i = 0; i < 8; i++){
-					for (int j = 0; j < 8; j++){
-						if(floor[i][j].isobstaclehere) DrawCircle((int)floor[i][j].position.x,(int)floor[i][j].position.y, 20, RED);
-					}
-				}
 
 
 				for (int i = 0; i < 7; i++){
@@ -1494,7 +1431,7 @@ int main ()
 					if(!enemies[i].dead && enemies[i].exists)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
 					if (enemies[i].dead)DrawTextureRec(explosion, enemies[i].explosionrect, enemies[i].explosionvect , WHITE);
 					
-					if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
+					
 				}
 
 				//DrawTexture(obstacle, 409, 395, WHITE);
@@ -1510,12 +1447,9 @@ int main ()
 				if (dir == 3 && playermovemet) DrawTextureRec(playerjumpleft, playerjumprectleft, positionplayer, WHITE);
 
 
-				if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
-				if (collisionball2) DrawText("2", 100, 100, 100, BLACK);
-				if (collisionball3) DrawText("3", 100, 100, 100, BLACK);
-				if (collisionball4) DrawText("4", 100, 100, 100, BLACK);
+				
 
-				DrawCircle(positionballx,positionbally, 20, GRAY);
+				
 
 				
 			
@@ -1605,11 +1539,7 @@ int main ()
 				DrawTexture(exitladder, exitladderx, exitladdery, WHITE);
 				DrawTexture(playersoul, soulposx, soulposy, WHITE);
 
-				for (int i = 0; i < 8; i++){
-					for (int j = 0; j < 8; j++){
-						if(floor[i][j].isobstaclehere) DrawCircle((int)floor[i][j].position.x,(int)floor[i][j].position.y, 20, RED);
-					}
-				}
+				
 
 
 				for (int i = 0; i < 7; i++){
@@ -1629,7 +1559,7 @@ int main ()
 					if(!enemies[i].dead && enemies[i].exists)DrawTexture(enemies[i].sprite,enemies[i].enemyx,enemies[i].enemyy,WHITE);
 					if (enemies[i].dead)DrawTextureRec(explosion, enemies[i].explosionrect, enemies[i].explosionvect , WHITE);
 					
-					if (notelist[i].collision) DrawText("contact", 100, 100, 100, BLACK);
+					
 				}
 
 				//DrawTexture(obstacle, 409, 395, WHITE);
@@ -1645,12 +1575,7 @@ int main ()
 				if (dir == 3 && playermovemet) DrawTextureRec(playerjumpleft, playerjumprectleft, positionplayer, WHITE);
 
 
-				if (collisionball1) DrawText("1", 100, 100, 100, BLACK);
-				if (collisionball2) DrawText("2", 100, 100, 100, BLACK);
-				if (collisionball3) DrawText("3", 100, 100, 100, BLACK);
-				if (collisionball4) DrawText("4", 100, 100, 100, BLACK);
-
-				DrawCircle(positionballx,positionbally, 20, GRAY);
+			
 
 				
 			

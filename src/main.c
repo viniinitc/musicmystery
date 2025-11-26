@@ -314,6 +314,7 @@ int main ()
 	Sound deadmusic = LoadSound("DEFEAT.mp3");
 
 	Music startmusic = LoadMusicStream("gamesong.mp3");
+	Music gamemusic = LoadMusicStream("dreamy.mp3");
 	
 	// Load a texture from the resources directory
 	
@@ -654,6 +655,8 @@ int main ()
 	Vector2 mousebutn = {0.0f, 0.0f};
 
 	PlayMusicStream(startmusic);
+	PlayMusicStream(gamemusic);
+	
 
 	// game loop
 	while (!exitWindow)		
@@ -810,12 +813,16 @@ int main ()
 			
 			case GAMEPLAY:{
 
+				
+
 				if(WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) {
 					exitWindowRequested = true;
 					currentScreen = PAUSE;
 				}
 				
+				UpdateMusicStream(gamemusic);
 
+                bool die1 = false;
 				bool die = false;
 				scrollingback -= 0.1f;
 				scrollingmid -= 0.5f;
@@ -836,10 +843,10 @@ int main ()
 					
 					
 
-					die = CheckCollisionCircles(enemies[i].vetor, 30.0f, (Vector2){positionplayer.x+64,positionplayer.y+48}, 30.0f);
-					die = CheckCollisionCircles(enemies[i].vetor, 30.0f, (Vector2){soulposx+48, soulposy+48}, 30.0f);
+					die = CheckCollisionCircles((Vector2){enemies[i].vetor.x,enemies[i].vetor.y}, 30.0f, (Vector2){positionplayer.x+64,positionplayer.y+64}, 30.0f);
+					die1 = CheckCollisionCircles(enemies[i].vetor, 30.0f, (Vector2){soulposx+48, soulposy+48}, 30.0f);
 
-					if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1) || die) {
+					if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1) || die || die1) {
 						PlaySound(deadmusic);
 						if (TimerDone(&turntimer)) currentScreen = TRANSITION;
 					}
@@ -1378,13 +1385,18 @@ int main ()
 
 		switch(currentScreen){
 			case LOGO:{
-				DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
 				DrawTexture(mylogo, (screenwidth/2)-(mylogo.width/2), (screenheight/2)-(mylogo.height/2), WHITE);
                 DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
 			}break;
 
 			case STARTSCREEN:{
-				DrawRectangle(0, 0,	screenwidth, screenheight, GREEN);
+
+                
+
+
+				DrawRectangle(0, 0,	screenwidth, screenheight, PURPLE);
+
+				DrawText("MUSIC MYSTERY", screenwidth/6,screenheight/4,100, BLUE );
 
 				DrawTextureRec(storybutton, buttonstorysource, (Vector2){ buttonstorybound.x, buttonstorybound.y }, WHITE);
 
@@ -1457,9 +1469,7 @@ int main ()
 
 
 				
-
-				
-
+                
 				
 			
 				
@@ -1492,7 +1502,7 @@ int main ()
 			case CREDITS:{
 				DrawText("Game made entirely by Vinicius Tenorio", 380, 400, 30, RED);
 				DrawText("This project was made without any help of A.I", 0, 880, 5, BLACK);
-				DrawText("Press exit to go back to the main menu", 380, 450, 20, WHITE );
+				DrawText("Press esc to go back to the main menu", 380, 450, 20, WHITE );
 				
 			}break;
 
@@ -1502,7 +1512,8 @@ int main ()
 
 				DrawRectangle(0, 0, screenwidth, screenheight, BLACK);
 
-				DrawText(TextFormat("Highest score %d", highscore),600, 400, 30, WHITE);
+				DrawText(TextFormat("Highest number of enemies killed in one game \n\n                           %d", highscore),300, 300, 30, WHITE);
+				DrawText("       Press esc to go back to the main menu", 380, 450, 20, WHITE );
 
 				
 			}break;
@@ -1512,9 +1523,9 @@ int main ()
 				DrawRectangle(0, 0, screenwidth, screenheight,WHITE);
 
 				if (!IsSoundPlaying(deadmusic)){
-					DrawText("You lose", screenwidth/3,screenheight/3,20, BLACK);
-					DrawText(TextFormat("you killed a total of %d enemies",playerpoint),screenwidth/2 - 100, screenheight/2,20,BLACK);
-					DrawText(TextFormat("you survived for %d turns in total",turn),screenwidth/2 - 100, screenheight/2 + 30,20,BLACK);
+					DrawText("You lose", screenwidth/3,screenheight/3,100, BLACK);
+					DrawText(TextFormat("you killed a total of %d enemies",playerpoint),screenwidth/2 - 200, screenheight/2,20,BLACK);
+					DrawText(TextFormat("you survived for %d turns in total",turn),screenwidth/2 - 200, screenheight/2 + 30,20,BLACK);
 					DrawTextureRec(menubutton, buttonmenusourcenew, (Vector2){ buttonmenuboundnew.x, buttonexitboundnew.y}, WHITE);
 
 					DrawTextureRec(exitbutton, buttonexitsourcenew, (Vector2){ buttonexitboundnew.x, buttonexitboundnew.y}, WHITE);
@@ -1618,7 +1629,10 @@ int main ()
 		UnloadSound(notelist[i].notesound);
 	}
 
-
+    UnloadSound(enemydeath);
+	UnloadSound(deadmusic);
+	UnloadMusicStream(startmusic);
+	UnloadMusicStream(gamemusic);
 	UnloadTexture(mylogo);
 	UnloadTexture(playersoul);
 	UnloadTexture(exitladder);

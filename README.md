@@ -36,7 +36,7 @@
 
 6. Clone the game repository:
    ```
-   git clone https://github.com/GMiranda21ML/Jogo-PIF.git
+   git clone https://github.com/viniinitc/musicmystery.git
    cd musicmystery
    ```
 
@@ -95,7 +95,7 @@ If you have any problems consult the Raylib documation for linux: [Raylib para L
 
 ### 🗝️ Objective
 
-- Get to the stair without letting the enemies reach you or your musical soul, and get the maximum point you can.
+- Get to the ladder without letting the enemies reach you or your musical soul, and get the maximum point you can.
 
 ---
 

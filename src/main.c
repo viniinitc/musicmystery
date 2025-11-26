@@ -286,10 +286,6 @@ int main ()
 	int playerpoint = 0;
 	Vector2 enemiespossiblepossitions[7];
 	Texture notenoan[7];
-	bool collisionball1 = false;
-	bool collisionball2 = false;
-	bool collisionball3 = false;
-	bool collisionball4 = false;
 
 	// Tell the window to use vsync and work on high DPI displays
 	SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
@@ -395,7 +391,6 @@ int main ()
 	
 	float turnduration = 1.0f;
 	float notetimerduration = turnduration/20;
-	float animationdur = 5.0f;
 
 	Vector2 position = { 350.0f, 280.0f};
 	Vector2 positionplayer = { 30.0f, 327.0f};
@@ -874,7 +869,6 @@ int main ()
 					
 				}	
 
-				collisionball1 = CheckCollisionPointCircle(GetMousePosition(),contact1, 20.0);
 		
 
 				//animation
@@ -898,10 +892,6 @@ int main ()
 					}
 				}
 
-
-
-
-				
 				
 
 				for (int i = 0; i < 7; i++){

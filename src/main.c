@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "stdio.h"
 #include "stdlib.h"
-#include "raymath.h"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
 
@@ -843,6 +842,7 @@ int main ()
 					
 
 					die = CheckCollisionCircles(enemies[i].vetor, 30.0f, (Vector2){positionplayer.x+64,positionplayer.y+48}, 30.0f);
+					die = CheckCollisionCircles(enemies[i].vetor, 30.0f, (Vector2){soulposx+48, soulposy+48}, 30.0f);
 
 					if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1) || die) {
 						PlaySound(deadmusic);
@@ -1441,8 +1441,8 @@ int main ()
 
 			
 				//temporary mouse text so i can figure out positions
-				DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
-						Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
+				// DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
+				// 		Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
 
 
 				for (int i = 0; i < 7; i++){
@@ -1569,8 +1569,8 @@ int main ()
 
 			
 				//temporary mouse text so i can figure out positions
-				DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
-						Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
+				// DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
+				// 		Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
 
 
 				for (int i = 0; i < 7; i++){

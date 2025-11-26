@@ -49,7 +49,7 @@
    cd bin/Debug/
    ./musicmystery
 
-If you have any problems consult the Raylib documation for linux: [Raylib para Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
+If you have any problems consult the Raylib documation for linux: [Raylib for Linux](https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux).
 
 
 ---
@@ -80,9 +80,9 @@ If you have any problems consult the Raylib documation for linux: [Raylib para L
 
 ---
 
-## 🎬 Demonstring how to execute the game
+## 🎬 Demonstring the game
 
-[[Youtube Video]](https://youtu.be/CFFP_qnYuyY)
+[[Youtube Video]](https://youtu.be/LwQc5IHJSBo)
 
 ---
 

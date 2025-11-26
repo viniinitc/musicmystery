@@ -843,12 +843,15 @@ int main ()
 					
 					
 
-					die = CheckCollisionCircles((Vector2){enemies[i].vetor.x,enemies[i].vetor.y}, 30.0f, (Vector2){positionplayer.x+64,positionplayer.y+64}, 30.0f);
+					die = CheckCollisionCircles((Vector2){enemies[i].vetor.x,enemies[i].vetor.y}, 35.0f, (Vector2){positionplayer.x+64,positionplayer.y+64}, 35.0f);
 					die1 = CheckCollisionCircles(enemies[i].vetor, 30.0f, (Vector2){soulposx+48, soulposy+48}, 30.0f);
 
 					if ((enemies[i].i == 1 && enemies[i].j == 0) || (enemies[i].i == 0 && enemies[i].j == 1) || die || die1) {
 						PlaySound(deadmusic);
-						if (TimerDone(&turntimer)) currentScreen = TRANSITION;
+						StopMusicStream(gamemusic);
+						if (TimerDone(&turntimer)) {
+							currentScreen = TRANSITION;
+						}
 					}
 
 					
